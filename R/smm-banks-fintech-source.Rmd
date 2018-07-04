@@ -43,5 +43,6 @@ ggplot(d.file, aes(x = Year, y = Type)) +
   ylab("Type") +
   theme_bw()
 
+#We try some more nice plots here
 
 ```
