@@ -1,5 +1,5 @@
 ---
-title: "MAS-Thesis-SMM-and-Trend-Monitoring-Source"
+title: "MAS-Thesis-SMM-Trend-Monitoring-Banks-Fintech-Source"
 author: "ajpucher"
 date: "2018 M07 4"
 output: html_document
