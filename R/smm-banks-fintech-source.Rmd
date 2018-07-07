@@ -13,13 +13,43 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 library(ggplot2)
+library(twitteR)
+library(Rfacebook)
 
+
+```
+
+### Source / load necessary R functions
+
+```{r}
+# Current working dir
+getwd()
+
+# Load authentication functions
+source("../auth/auth.R")
 
 
 
 ```
 
-## Read the input dataset gathered by research
+
+
+### Authentication with Twitter and Facebook
+
+```{r}
+# Autentication Twitter
+auth_twitter()
+
+# Authentication Facebook
+auth_facebook()
+
+#Warning Invalid Scopes: user_relationships, publish_actions
+
+
+
+```
+
+### Read the input dataset gathered by research
 
 ```{r}
 getwd()
@@ -46,3 +76,43 @@ ggplot(d.file, aes(x = Year, y = Type)) +
 #We try some more nice plots here
 
 ```
+
+
+### Access and query Twitter API - Example
+
+```{r}
+
+user=getUser("ETH")
+
+# User name
+user
+# User created date
+user$created
+
+# User details
+# User likes (favorites)
+user$favoritesCount
+# Follower
+user$followersCount
+# User follows (friends)
+user$friendsCount
+# User tweets
+user$statusesCount
+
+
+
+```
+
+### Access and query Facebook API - Example
+
+```{r}
+
+me <- getUsers("me", token=fb_oauth)
+my_likes <- getLikes(user="me", token=fb_oauth)
+
+
+```
+
+
+
+
