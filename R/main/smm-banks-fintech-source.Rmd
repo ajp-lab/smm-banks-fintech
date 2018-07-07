@@ -54,7 +54,7 @@ auth_facebook()
 ```{r}
 getwd()
 
-d.file <- read.csv("../data/smm-banks-fintech-input-dataset.csv", sep=";", head=TRUE, stringsAsFactors=FALSE, encoding = "UTF-8")
+d.file <- read.csv("../../data/input/smm-banks-fintech-input-dataset.csv", sep=";", head=TRUE, stringsAsFactors=FALSE, encoding = "UTF-8")
 head(d.file)
 dim(d.file)
 
@@ -108,7 +108,6 @@ user$statusesCount
 ```{r}
 
 me <- getUsers("me", token=fb_oauth)
-my_likes <- getLikes(user="me", token=fb_oauth)
 
 
 ```

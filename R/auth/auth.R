@@ -31,14 +31,8 @@ auth_facebook <- function() {
   fb_oauth <- fbOAuth(app_id = Sys.getenv("fb_app_id"),
           app_secret = Sys.getenv("fb_app_secret"))
   
-  
-  #extended_permissions = TRUE
-  
-  # further code...
-  # fb_oauth <- fbOAuth(app_id="11",app_secret="XX",extended_permissions = TRUE)
-  
   # after authentication
-  # save(fb_oauth, file="fb_oauth")
-  # load("fb_oauth")
+  save(fb_oauth, file=".fb_oauth")
+  load(".fb_oauth")
   
 }
