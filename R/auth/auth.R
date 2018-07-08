@@ -28,6 +28,14 @@ auth_twitter <- function() {
 auth_facebook <- function() {
   
   require(Rfacebook)
+  
+  # Set scope
+  scope <- c("user_status","user_likes")
+  
+  # Set extended permission = true, for following permissions:
+  # scope <- c("user_birthday", "user_hometown", "user_location", "user_relationships",
+  # "publish_actions","user_status","user_likes")
+  
   fb_oauth <- fbOAuth(app_id = Sys.getenv("fb_app_id"),
           app_secret = Sys.getenv("fb_app_secret"))
   
