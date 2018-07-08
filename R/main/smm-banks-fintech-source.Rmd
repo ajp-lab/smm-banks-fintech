@@ -1,5 +1,5 @@
 ---
-title: "MAS-Thesis-SMM-and-Trend-Monitoring-Source"
+title: "MAS-Thesis-SMM-and-Trend-Monitoring-Descriptives"
 author: "ajpucher"
 date: "2018 M07 4"
 output: html_document
@@ -14,7 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 library(ggplot2)
 library(twitteR)
-library(Rfacebook)
+
 
 
 ```
@@ -34,16 +34,14 @@ source("../auth/auth.R")
 
 
 
-### Authentication with Twitter and Facebook
+### Authentication to Twitter API (works, July 2018)
+### Authentication to FB API: This is unfortunately not supported anymore (Cambridge Analytica scandal)! Check: http://theconversation.com/facebooks-data-lockdown-is-a-disaster-for-academic-researchers-94533
 
 ```{r}
-# Autentication Twitter
+# Start Authentication to Twitter API
 auth_twitter()
 
-# Authentication Facebook
-auth_facebook()
 
-#Warning Invalid Scopes: user_relationships, publish_actions
 
 
 
@@ -99,15 +97,6 @@ user$friendsCount
 # User tweets
 user$statusesCount
 
-
-
-```
-
-### Access and query Facebook API - Example
-
-```{r}
-
-me <- getUsers("me", token=fb_oauth)
 
 
 ```
