@@ -1,0 +1,117 @@
+---
+title: "MAS-Thesis-SMM-and-Trend-Monitoring-Source"
+author: "ajpucher"
+date: "2018 M07 4"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Inventory of all libs / load all libs here
+
+```{r}
+library(ggplot2)
+library(twitteR)
+library(Rfacebook)
+
+
+```
+
+### Source / load necessary R functions
+
+```{r}
+# Current working dir
+getwd()
+
+# Load authentication functions
+source("../auth/auth.R")
+
+
+
+```
+
+
+
+### Authentication with Twitter and Facebook
+
+```{r}
+# Autentication Twitter
+auth_twitter()
+
+# Authentication Facebook
+auth_facebook()
+
+#Warning Invalid Scopes: user_relationships, publish_actions
+
+
+
+```
+
+### Read the input dataset gathered by research
+
+```{r}
+getwd()
+
+d.file <- read.csv("../../data/input/smm-banks-fintech-input-dataset.csv", sep=";", head=TRUE, stringsAsFactors=FALSE, encoding = "UTF-8")
+head(d.file)
+dim(d.file)
+
+d.file
+
+```
+
+### Show some plots and descriptive statistics
+
+```{r}
+
+#Show type (bank or fintech) compared to funding year
+ggplot(d.file, aes(x = Year, y = Type)) +
+  geom_point() +
+  xlab("Funding Year") +
+  ylab("Type") +
+  theme_bw()
+
+#We try some more nice plots here
+
+```
+
+
+### Access and query Twitter API - Example
+
+```{r}
+
+user=getUser("ETH")
+
+# User name
+user
+# User created date
+user$created
+
+# User details
+# User likes (favorites)
+user$favoritesCount
+# Follower
+user$followersCount
+# User follows (friends)
+user$friendsCount
+# User tweets
+user$statusesCount
+
+
+
+```
+
+### Access and query Facebook API - Example
+
+```{r}
+
+me <- getUsers("me", token=fb_oauth)
+
+
+```
+
+
+
+
