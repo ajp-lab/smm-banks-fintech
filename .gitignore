@@ -4,4 +4,5 @@
 .Ruserdata
 .Renviron
 .fb_oauth
+.httr-oauth
 packrat/lib*/
