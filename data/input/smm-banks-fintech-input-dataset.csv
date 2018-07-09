@@ -1,98 +1,98 @@
-Year;Name;Type;Category;Place;Canton;Account_TW;Account_FB
-2016;Credit Suisse (Schweiz) AG;Bank;Big banks;Zürich;ZH;csschweiz;creditsuisse
-2015;UBS Switzerland AG;Bank;Big banks;Zürich;ZH;UBSschweiz;UBSTWINT
-1834;Berner Kantonalbank AG;Bank;Cantonal banks;Bern;BE;bekbbcbe;Berner-Kantonalbank/105527996148047
-1850;Luzerner Kantonalbank AG;Bank;Cantonal banks;Luzern;LU;LuzernerKB;LuzernerKB
-1892;Zuger Kantonalbank;Bank;Cantonal banks;Zug;ZG;NA;zugerkb
-1899;Appenzeller Kantonalbank;Bank;Cantonal banks;Appenzell;AI;AppenzellerKB;appkb
-1899;Basler Kantonalbank;Bank;Cantonal banks;Basel;BS;BaslerKB;BaslerKantonalbank
-1879;Nidwaldner Kantonalbank;Bank;Cantonal banks;Stans;NW;NA;nkb.ch
-1883;Schaffhauser Kantonalbank;Bank;Cantonal banks;Schaffhausen;SH;NA;Schaffhauser-Kantonalbank/263674860484187
-1871;Thurgauer Kantonalbank;Bank;Cantonal banks;Weinfelden;TG;NA;tkb
-1870;Zürcher Kantonalbank;Bank;Cantonal banks;Zürich;ZH;zkb_ch;zkb.ch
-1909;Bank CIC (Schweiz) AG;Bank;Foreign-controlled banks;Basel;BS;Bank_CIC;Bank-Cic-Basel/196593770413276
-1848;Bank Linth LLB AG;Bank;Foreign-controlled banks;Uznach;SG;BankLinth;banklinth
-2010;Cembra Money Bank AG;Bank;Other banks;Zürich;ZH;CembraMoneyBank;Cembra-Money-Bank-AG/602372279821360
-1958;Migros Bank AG;Bank;Other banks;Zürich;ZH;migrosbank;migrosbank
-2013;PostFinance AG;Bank;Other banks;Bern;BE;PostFinance;postfinance
-1927;Bank Cler AG;Bank;Other banks;Basel;BS;bankcler;bankcler
-1902;Raiffeisen-Gruppe exkl. Notenstein Privatbank AG;Bank;Raiffeisen banks;St. Gallen;SG;Raiffeisen_CH;RaiffeisenSchweiz
-1826;AEK BANK 1826 Genossenschaft;Bank;Regional banks and savings banks;Thun;BE;NA;AEK-Bank-1826/402034229889008
-1852;Bank EKI Genossenschaft;Bank;Regional banks and savings banks;Interlaken;BE;NA;Bank-EKI/107881919232227
-1836;Bank Leerau Genossenschaft;Bank;Regional banks and savings banks;Kirchleerau;AG;NA;Bank Leerau/104039019633583
-1879;Biene Bank im Rheintal Genossenschaft;Bank;Regional banks and savings banks;Altstätten;SG;NA;bienebank
-1889;Clientis Bank Thur Genossenschaft;Bank;Regional banks and savings banks;Ebnat-Kappel;SG;NA;bankthur
-1857;GRB Glarner Regionalbank Genossenschaft;Bank;Regional banks and savings banks;Glarus Süd;GL;NA;GRB-Glarner-Regionalbank/112418238772544
-1819;Ersparniskasse Speicher;Bank;Regional banks and savings banks;Speicher;AR;NA;Ersparniskasse/703629596371158
-2002;acrevis Bank AG;Bank;Regional banks and savings banks;St. Gallen;SG;acrevis;acrevisBank
-1868;Alpha RHEINTAL Bank AG;Bank;Regional banks and savings banks;Au SG;SG;NA;Alpha-Rheintal-Bank-AG/233171020073519
-1821;Bank EEK AG;Bank;Regional banks and savings banks;Bern;BE;NA;Bank-Eek-Ag/280131832019180
-1876;Bank Oberaargau AG;Bank;Regional banks and savings banks;Huttwil;BE;NA;Clientis-Bank-Oberaargau-AG/132856500096970
-1850;Bank Sparhafen Zürich AG;Bank;Regional banks and savings banks;Zürich;ZH;NA;Bank-Sparhafen-Z%C3%BCrich/568635373256912
-1851;BBO Bank Brienz Oberhasli AG;Bank;Regional banks and savings banks;Brienz BE;BE;NA;BBOBank
-1998;BS Bank Schaffhausen AG;Bank;Regional banks and savings banks;Hallau;SH;NA;Clientis-BS-Bank-Schaffhausen/232591266764902
-1885;Clientis Bank im Thal AG;Bank;Regional banks and savings banks;Balsthal;SO;NA;Clientis-Bank-im-Thal-AG/158708684172053
-1874;Clientis Bank Oberuzwil AG;Bank;Regional banks and savings banks;Oberuzwil;SG;NA;oberuzwil.clientis.ch
-1994;Clientis EB Entlebucher Bank AG;Bank;Regional banks and savings banks;Schüpfheim;LU;NA;NA
-1817;Ersparniskasse Schaffhausen AG;Bank;Regional banks and savings banks;Schaffhausen;SH;NA;ErsparniskasseSchaffhausen
-1863;Leihkasse Stammheim AG;Bank;Regional banks and savings banks;Oberstammheim;ZH;NA;Leihkasse-Stammheim-AG-1618044848311693
-1903;Regiobank Männedorf AG;Bank;Regional banks and savings banks;Männedorf;ZH;NA;Regiobank-M%C3%A4nnedorf/105473519486997
-1874;SB Saanen Bank AG;Bank;Regional banks and savings banks;Saanen;BE;NA;SaanenBank
-1850;Spar- und Leihkasse Bucheggberg AG;Bank;Regional banks and savings banks;Lüterswil-Gächliwil;SO;NA;NA
-1895;Spar- und Leihkasse Thayngen AG;Bank;Regional banks and savings banks;Thayngen;SH;NA;Clientis Spar- und Leihkasse Thayngen/587105604707755
-1903;Spar+Leihkasse Riggisberg AG;Bank;Regional banks and savings banks;Riggisberg;BE;NA;SparLeihkasse-Riggisberg/150655591636821
-1812;Sparkasse Schwyz AG;Bank;Regional banks and savings banks;Schwyz;SZ;NA;Sparkasse-Schwyz-AG-1819098274981205
-1997;Valiant Bank AG;Bank;Regional banks and savings banks;Bern;BE;ValiantBank;valiantbank.ch
-1851;Zürcher Landbank AG;Bank;Regional banks and savings banks;Elgg;ZH;NA;zuercherlandbank
-2017;www.flink.ai;Fintech;Analytics;Zürich;ZH;NA;NA
-2013;www.moneyland.ch;Fintech;Analytics;Zürich;ZH;moneyland_ch;moneylandCH
-1996;www.crealogix.com;Fintech;Banking Infrastructure;Zürich;ZH;CREALOGIX_en;Crealogix
-2011;www.moneypark.ch;Fintech;Banking Infrastructure;Schwyz;SZ;MyMoneyPark;moneypark
-2012;www.moribono.ch;Fintech;Banking Infrastructure;Lucerne;LU;moribono;moribono
-2016;www.sonect.net;Fintech;Banking Infrastructure;Zürich;ZH;sonectme;sonectme
-2017;www.taxlevel.ch;Fintech;Banking Infrastructure;Zürich;ZH;NA;NA
-2013;www.knip.ch;Fintech;Banking Infrastructure;Zürich;ZH;Knip;KnipDE
-2015;www.anivo.ch;Fintech;Banking Infrastructure;Zug;ZG;AnivoInsurance;anivoinsurancebroker
-2018;www.imbursepayments.com;Fintech;Banking Infrastructure;Zürich;ZH;ImburseAG;NA
-2017;www.oyoba.net;Fintech;Banking Infrastructure;Zürich;ZH;oyobainc;oyobainc
-2015;www.3circlefunding.ch;Fintech;Deposit & Lending;Zürich;ZH;3circlefunding;3circlefunding
-2010;www.c-crowd.com;Fintech;Deposit & Lending;Zürich;ZH;ccrowd;swisscrowdfunding
-2017;www.creditfolio.ch;Fintech;Deposit & Lending;Basel;BS;Creditfolio;Creditfolio
-2015;www.creditworld.ch;Fintech;Deposit & Lending;Zug;ZG;creditworld_ag;creditworldAG
-2016;www.crowd4cash.ch;Fintech;Deposit & Lending;Zug;ZG;Crowd4Cash;Crowd4Cash-1445248278914044
-2013;www.go-beyond.biz;Fintech;Deposit & Lending;Zürich;ZH;gobeyondinvest;GoBeyondInvesting
-2016;www.hypo-scout.ch;Fintech;Deposit & Lending;Zürich;ZH;Hyposcout_AG;Hyposcout
-2017;www.hypotheko.ch;Fintech;Deposit & Lending;Basel-Country;BL;hypotheko;hypotheko
-2015;www.lend.ch;Fintech;Deposit & Lending;Zürich;ZH;LEND_CH;lend.ch
-2016;www.loanboox.ch;Fintech;Deposit & Lending;Zürich;ZH;loanboox;loanboox
-2015;www.swisspeers.ch;Fintech;Deposit & Lending;Zürich;ZH;swisspeers;swisspeers.ch
-2017;www.bancor.network;Fintech;Distributed Ledger Technology;Zug;ZG;bancor?lang=de;bancor
-2017;www.coreledger.net;Fintech;Distributed Ledger Technology;Zug;ZG;CoreLedger;coreledger.ag.1
-2017;www.cryptofinance.ch;Fintech;Distributed Ledger Technology;Zug;ZG;CryptoFinanceAG;CryptoFinanceAG
-2015;www.digitalbitbox.com;Fintech;Distributed Ledger Technology;Basel-Country;BL;DigitalBitbox;Digital-Bitbox-130791914294135
-2015;www.iprotus.com;Fintech;Distributed Ledger Technology;Zug;ZG;i_protus;iprotus
-2013;www.lykke.com;Fintech;Distributed Ledger Technology;Zug;ZG;lykke;LykkeCity
-2002;www.payment21.com;Fintech;Distributed Ledger Technology;St. Gallen;SG;Payment21_XBT;Payment21
-2015;www.breadapp.com;Fintech;Distributed Ledger Technology;Zürich;ZH;breadapp;BreadApp
-2014;www.shapeshift.io;Fintech;Distributed Ledger Technology;Zug;ZG;ShapeShift_io;shapeshiftexchange
-2017;jibrel.network;Fintech;Distributed Ledger Technology;Zug;ZG;JibrelNetwork;jibrelnetwork
-2013;www.bitcoinsuisse.ch;Fintech;Distributed Ledger Technology;Zug;ZG;BitcoinSuisseAG;BitcoinSuisse
-2015;www.3rd-eyes.com;Fintech;Investment Management;Zürich;ZH;inside_3rd_eyes;3rdeyesnavigationsystem
-2012;www.aaaccell.ch;Fintech;Investment Management;Zürich;ZH;AAAccell1;NA
-2014;www.bbanalytics.biz;Fintech;Investment Management;Zug;ZG;BnBAnalytics;NA
-2016;www.clearminds.ch;Fintech;Investment Management;Basel;BS;ClearMindsInv;clearminds.ch
-2015;www.descartes-finance.com;Fintech;Investment Management;Zug;ZG;DescartesFin;descartesfinance
-2011;www.investory.ch;Fintech;Investment Management;Zürich;ZH;investory_io;investory.io
-2014;www.purevaluemetrics.com;Fintech;Investment Management;Schwyz;SZ;PureValueMetric;NA
-2016;www.selmafinance.ch;Fintech;Investment Management;Schwyz;SZ;SelmaFinance;selma.finance
-2015;www.simplewealth.ch;Fintech;Investment Management;Zürich;ZH;SimpleWealth;Simplewealth
-2015;www.smartmoneymatch.com;Fintech;Investment Management;Zug;ZG;SmartMoneyMatch;SmartMoneyMatch
-2003;www.spectravest.ch;Fintech;Investment Management;Berne;BE;spectravest;spectravest
-2013;www.truewealth.ch;Fintech;Investment Management;Zürich;ZH;True_Wealth_;truewealthag
-2017;www.visionand.ch;Fintech;Investment Management;Zug;ZG;visionandch;NA
-2016;www.werthstein.com;Fintech;Investment Management;Zürich;ZH;werthstein;werthstein
-2015;www.crowdhouse.ch;Fintech;Investment Management;Zürich;ZH;crowdhouse_ch;crowdhouseCH
-2017;www.ecollect.ch;Fintech;Payment;Schwyz;SZ;ecollect;ecollect
-2013;www.muume.com;Fintech;Payment;Zug;ZG;MUUME_digital;MUUMEdigital
-2014;www.sweepay.ch;Fintech;Payment;Zug;ZG;SweePay_ltd;NA
-2014;www.twint.ch;Fintech;Payment;Berne;BE;TWINT_AG;twintwallet
+year;name;type;category;place;canton;tw_account;tw_url;tw_parse;tw_favorites;tw_followers;tw_friends;tw_statuses;fb_account;fb_url;fb_favorites;fb_followers
+2016;Credit Suisse (Schweiz) AG;Bank;Big banks;Zürich;ZH;csschweiz;https://twitter.com/csschweiz;csschweiz;;;;;Credit Suisse;https://www.facebook.com/creditsuisse/;117653;115493
+2015;UBS Switzerland AG;Bank;Big banks;Zürich;ZH;UBSschweiz;https://twitter.com/UBSschweiz;UBSschweiz;;;;;ubsschweiz;https://www.facebook.com/ubsschweiz;157458;157743
+1834;Berner Kantonalbank AG;Bank;Cantonal banks;Bern;BE;bekbbcbe;https://twitter.com/bekbbcbe;bekbbcbe;;;;;Berner-Kantonalbank;https://de-de.facebook.com/pages/biz/bank/Berner-Kantonalbank/105527996148047;2;0
+1850;Luzerner Kantonalbank AG;Bank;Cantonal banks;Luzern;LU;LuzernerKB;https://twitter.com/LuzernerKB;LuzernerKB;;;;;Luzerner Kantonalbank AG;https://www.facebook.com/LuzernerKB/;975;971
+1892;Zuger Kantonalbank;Bank;Cantonal banks;Zug;ZG;NA;NA;NA;;;;;Zuger Kantonalbank;https://www.facebook.com/zugerkb/;656;672
+1899;Appenzeller Kantonalbank;Bank;Cantonal banks;Appenzell;AI;AppenzellerKB;https://twitter.com/AppenzellerKB;AppenzellerKB;;;;;Appenzeller Kantonalbank;https://www.facebook.com/appkb/;767;770
+1899;Basler Kantonalbank;Bank;Cantonal banks;Basel;BS;BaslerKB;https://twitter.com/BaslerKB;BaslerKB;;;;;Basler Kantonalbank;https://www.facebook.com/BaslerKantonalbank/;2167;2192
+1879;Nidwaldner Kantonalbank;Bank;Cantonal banks;Stans;NW;NA;NA;NA;;;;;Nidwaldner Kantonalbank;https://www.facebook.com/nkb.ch/;1060;1061
+1883;Schaffhauser Kantonalbank;Bank;Cantonal banks;Schaffhausen;SH;NA;NA;NA;;;;;Schaffhauser-Kantonalbank;https://www.facebook.com/pages/Schaffhauser-Kantonalbank/263674860484187;16;0
+1871;Thurgauer Kantonalbank;Bank;Cantonal banks;Weinfelden;TG;NA;NA;NA;;;;;Thurgauer Kantonalbank TKB;https://www.facebook.com/tkb/;3951;3899
+1870;Zürcher Kantonalbank;Bank;Cantonal banks;Zürich;ZH;zkb_ch;https://twitter.com/zkb_ch;zkb_ch;;;;;Zürcher Kantonalbank;https://www.facebook.com/zkb.ch/;12607;12635
+1909;Bank CIC (Schweiz) AG;Bank;Foreign-controlled banks;Basel;BS;Bank_CIC;https://twitter.com/Bank_CIC;Bank_CIC;;;;;Bank-Cic-Basel;https://www.facebook.com/pages/Bank-Cic-Basel/196593770413276;5;0
+1848;Bank Linth LLB AG;Bank;Foreign-controlled banks;Uznach;SG;BankLinth;https://twitter.com/BankLinth;BankLinth;;;;;Bank Linth;https://www.facebook.com/banklinth/;1421;1408
+2010;Cembra Money Bank AG;Bank;Other banks;Zürich;ZH;CembraMoneyBank;https://twitter.com/CembraMoneyBank;CembraMoneyBank;;;;;Cembra-Money-Bank-AG;https://www.facebook.com/pages/Cembra-Money-Bank-AG/602372279821360;18;0
+1958;Migros Bank AG;Bank;Other banks;Zürich;ZH;migrosbank;https://twitter.com/migrosbank;migrosbank;;;;;Migros Bank / Banque Migros / Banca Migros;https://www.facebook.com/migrosbank/;6362;6317
+2013;PostFinance AG;Bank;Other banks;Bern;BE;PostFinance;https://twitter.com/PostFinance;PostFinance;;;;;PostFinance;https://www.facebook.com/postfinance/;31056;30497
+1927;Bank Cler AG;Bank;Other banks;Basel;BS;bankcler;https://twitter.com/bankcler;bankcler;;;;;Bank Cler;https://www.facebook.com/bankcler/;2691;2734
+1902;Raiffeisen-Gruppe exkl. Notenstein Privatbank AG;Bank;Raiffeisen banks;St. Gallen;SG;Raiffeisen_CH;https://twitter.com/Raiffeisen_CH;Raiffeisen_CH;;;;;Raiffeisen Schweiz;https://www.facebook.com/RaiffeisenSchweiz/;36364;36169
+1826;AEK BANK 1826 Genossenschaft;Bank;Regional banks and savings banks;Thun;BE;NA;NA;NA;;;;;AEK-Bank-1826;https://www.facebook.com/pages/AEK-Bank-1826/402034229889008;10;0
+1852;Bank EKI Genossenschaft;Bank;Regional banks and savings banks;Interlaken;BE;NA;NA;NA;;;;;Bank-EKI;https://www.facebook.com/pages/Bank-EKI/107881919232227;31;0
+1836;Bank Leerau Genossenschaft;Bank;Regional banks and savings banks;Kirchleerau;AG;NA;NA;NA;;;;;Bank%20Leerau;https://www.facebook.com/pages/Bank Leerau/104039019633583;8;0
+1879;Biene Bank im Rheintal Genossenschaft;Bank;Regional banks and savings banks;Altstätten;SG;NA;NA;NA;;;;;Clientis Biene Bank im Rheintal;https://www.facebook.com/bienebank/;162;163
+1889;Clientis Bank Thur Genossenschaft;Bank;Regional banks and savings banks;Ebnat-Kappel;SG;NA;NA;NA;;;;;Clientis Bank Thur;https://www.facebook.com/bankthur/;358;356
+1857;GRB Glarner Regionalbank Genossenschaft;Bank;Regional banks and savings banks;Glarus Süd;GL;NA;NA;NA;;;;;GRB-Glarner-Regionalbank;https://www.facebook.com/pages/GRB-Glarner-Regionalbank/112418238772544?nr;1;0
+1819;Ersparniskasse Speicher;Bank;Regional banks and savings banks;Speicher;AR;NA;NA;NA;;;;;Ersparniskasse;https://www.facebook.com/pages/Ersparniskasse/703629596371158;0;0
+2002;acrevis Bank AG;Bank;Regional banks and savings banks;St. Gallen;SG;acrevis;https://twitter.com/acrevis;acrevis;;;;;acrevis Bank AG;https://www.facebook.com/acrevisBank/;119;123
+1868;Alpha RHEINTAL Bank AG;Bank;Regional banks and savings banks;Au SG;SG;NA;NA;NA;;;;;Alpha-Rheintal-Bank-AG;https://www.facebook.com/pages/Alpha-Rheintal-Bank-AG/233171020073519;2;0
+1821;Bank EEK AG;Bank;Regional banks and savings banks;Bern;BE;NA;NA;NA;;;;;Bank-Eek-Ag;https://www.facebook.com/pages/Bank-Eek-Ag/280131832019180;2;0
+1876;Bank Oberaargau AG;Bank;Regional banks and savings banks;Huttwil;BE;NA;NA;NA;;;;;Clientis-Bank-Oberaargau-AG;https://www.facebook.com/pages/Clientis-Bank-Oberaargau-AG/132856500096970?fref=mentions;2;0
+1850;Bank Sparhafen Zürich AG;Bank;Regional banks and savings banks;Zürich;ZH;NA;NA;NA;;;;;Bank-Sparhafen;https://www.facebook.com/pages/Bank-Sparhafen-Z%C3%BCrich/568635373256912;4;0
+1851;BBO Bank Brienz Oberhasli AG;Bank;Regional banks and savings banks;Brienz BE;BE;NA;NA;NA;;;;;BBO Bank Brienz Oberhasli AG;https://www.facebook.com/BBOBank/;2003;1966
+1998;BS Bank Schaffhausen AG;Bank;Regional banks and savings banks;Hallau;SH;NA;NA;NA;;;;;Clientis-BS-Bank-Schaffhausen;https://www.facebook.com/pages/Clientis-BS-Bank-Schaffhausen/232591266764902;10;0
+1885;Clientis Bank im Thal AG;Bank;Regional banks and savings banks;Balsthal;SO;NA;NA;NA;;;;;Clientis-Bank-im-Thal-AG;https://www.facebook.com/pages/Clientis-Bank-im-Thal-AG/158708684172053;0;0
+1874;Clientis Bank Oberuzwil AG;Bank;Regional banks and savings banks;Oberuzwil;SG;NA;NA;NA;;;;;Clientis Bank Oberuzwil;https://www.facebook.com/oberuzwil.clientis.ch/;60;61
+1994;Clientis EB Entlebucher Bank AG;Bank;Regional banks and savings banks;Schüpfheim;LU;NA;NA;NA;;;;;NA;NA;NA;NA
+1817;Ersparniskasse Schaffhausen AG;Bank;Regional banks and savings banks;Schaffhausen;SH;NA;NA;NA;;;;;Ersparniskasse Schaffhausen AG;https://www.facebook.com/ErsparniskasseSchaffhausen/;179;177
+1863;Leihkasse Stammheim AG;Bank;Regional banks and savings banks;Oberstammheim;ZH;NA;NA;NA;;;;;Leihkasse Stammheim AG;https://www.facebook.com/Leihkasse-Stammheim-AG-1618044848311693/;11;11
+1903;Regiobank Männedorf AG;Bank;Regional banks and savings banks;Männedorf;ZH;NA;NA;NA;;;;;Regiobank-M%C3%A4nnedorf;https://www.facebook.com/pages/biz/local/Regiobank-M%C3%A4nnedorf/105473519486997;2;0
+1874;SB Saanen Bank AG;Bank;Regional banks and savings banks;Saanen;BE;NA;NA;NA;;;;;SB Saanen Bank AG;https://www.facebook.com/SaanenBank/;403;401
+1850;Spar- und Leihkasse Bucheggberg AG;Bank;Regional banks and savings banks;Lüterswil-Gächliwil;SO;NA;NA;NA;;;;;NA;NA;NA;NA
+1895;Spar- und Leihkasse Thayngen AG;Bank;Regional banks and savings banks;Thayngen;SH;NA;NA;NA;;;;;Clientis%20Spar-%20und%20Leihkasse%20Thayngen;https://www.facebook.com/pages/Clientis Spar- und Leihkasse Thayngen/587105604707755;3;0
+1903;Spar+Leihkasse Riggisberg AG;Bank;Regional banks and savings banks;Riggisberg;BE;NA;NA;NA;;;;;SparLeihkasse-Riggisberg;https://www.facebook.com/pages/SparLeihkasse-Riggisberg/150655591636821;8;0
+1812;Sparkasse Schwyz AG;Bank;Regional banks and savings banks;Schwyz;SZ;NA;NA;NA;;;;;Sparkasse Schwyz AG;https://www.facebook.com/Sparkasse-Schwyz-AG-1819098274981205/;0;0
+1997;Valiant Bank AG;Bank;Regional banks and savings banks;Bern;BE;ValiantBank;https://twitter.com/ValiantBank;ValiantBank;;;;;Valiant;https://www.facebook.com/valiantbank.ch/;2097;2091
+1851;Zürcher Landbank AG;Bank;Regional banks and savings banks;Elgg;ZH;NA;NA;NA;;;;;Zürcher Landbank;https://www.facebook.com/zuercherlandbank/;617;602
+2017;www.flink.ai;Fintech;Analytics;Zürich;ZH;NA;NA;NA;;;;;NA;NA;NA;NA
+2013;www.moneyland.ch;Fintech;Analytics;Zürich;ZH;moneyland.ch;https://twitter.com/moneyland_ch;moneyland_ch;;;;;moneyland.ch;https://www.facebook.com/moneylandCH/;2761;2736
+1996;www.crealogix.com;Fintech;Banking Infrastructure;Zürich;ZH;CREALOGIX Group_en;https://twitter.com/CREALOGIX_en;CREALOGIX_en;;;;;CREALOGIX Gruppe;https://www.facebook.com/Crealogix/;347;341
+2011;www.moneypark.ch;Fintech;Banking Infrastructure;Schwyz;SZ;MoneyPark;https://twitter.com/MyMoneyPark;MyMoneyPark;;;;;MoneyPark;https://www.facebook.com/moneypark/;4088;4013
+2012;www.moribono.ch;Fintech;Banking Infrastructure;Lucerne;LU;moribono;https://twitter.com/moribono;moribono;;;;;moribono;https://www.facebook.com/moribono/;101;89
+2016;www.sonect.net;Fintech;Banking Infrastructure;Zürich;ZH;SONECT;https://twitter.com/sonectme;sonectme;;;;;SONECT;https://www.facebook.com/sonectme/;427;434
+2017;www.taxlevel.ch;Fintech;Banking Infrastructure;Zürich;ZH;NA;NA;NA;;;;;NA;NA;NA;NA
+2013;www.knip.ch;Fintech;Banking Infrastructure;Zürich;ZH;Knip;https://twitter.com/Knip;Knip;;;;;Knip;https://www.facebook.com/KnipDE/;6882;6795
+2015;www.anivo.ch;Fintech;Banking Infrastructure;Zug;ZG;Anivo;https://twitter.com/AnivoInsurance;AnivoInsurance;;;;;ANIVO;https://www.facebook.com/anivoinsurancebroker/;294;291
+2018;www.imbursepayments.com;Fintech;Banking Infrastructure;Zürich;ZH;Imburse Transaction Platform;https://twitter.com/ImburseAG;ImburseAG;;;;;NA;NA;NA;NA
+2017;www.oyoba.net;Fintech;Banking Infrastructure;Zürich;ZH;Oyoba Inc.;https://twitter.com/oyobainc;oyobainc;;;;;Oyoba Inc.;https://www.facebook.com/oyobainc/;324;325
+2015;www.3circlefunding.ch;Fintech;Deposit & Lending;Zürich;ZH;3circlefunding;https://twitter.com/3circlefunding;3circlefunding;;;;;3circlefunding GmbH;https://www.facebook.com/3circlefunding/;101;101
+2010;www.c-crowd.com;Fintech;Deposit & Lending;Zürich;ZH;c-crowd AG;https://twitter.com/ccrowd;ccrowd;;;;;C-crowd;https://www.facebook.com/swisscrowdfunding/;1133;1096
+2017;www.creditfolio.ch;Fintech;Deposit & Lending;Basel;BS;Creditfolio;https://twitter.com/Creditfolio;Creditfolio;;;;;Creditfolio;https://www.facebook.com/Creditfolio/;46;48
+2015;www.creditworld.ch;Fintech;Deposit & Lending;Zug;ZG;creditworld;https://twitter.com/creditworld_ag;creditworld_ag;;;;;creditworld AG;https://www.facebook.com/creditworldAG/;229;230
+2016;www.crowd4cash.ch;Fintech;Deposit & Lending;Zug;ZG;Crowd4Cash;https://twitter.com/Crowd4Cash;Crowd4Cash;;;;;Crowd4Cash;https://www.facebook.com/Crowd4Cash-1445248278914044/;12;12
+2013;www.go-beyond.biz;Fintech;Deposit & Lending;Zürich;ZH;Go Beyond Investing;https://twitter.com/gobeyondinvest;gobeyondinvest;;;;;Go Beyond Investing;https://www.facebook.com/GoBeyondInvesting/;654;664
+2016;www.hypo-scout.ch;Fintech;Deposit & Lending;Zürich;ZH;Hyposcout AG;https://twitter.com/Hyposcout_AG;Hyposcout_AG;;;;;Hyposcout;https://www.facebook.com/Hyposcout/;652;664
+2017;www.hypotheko.ch;Fintech;Deposit & Lending;Basel-Country;BL;Hypotheko;https://twitter.com/hypotheko;hypotheko;;;;;Hypotheko;https://www.facebook.com/hypotheko/;73;73
+2015;www.lend.ch;Fintech;Deposit & Lending;Zürich;ZH;LEND;https://twitter.com/LEND_CH;LEND_CH;;;;;LEND;https://www.facebook.com/lend.ch/;466;476
+2016;www.loanboox.ch;Fintech;Deposit & Lending;Zürich;ZH;Loanboox;https://twitter.com/loanboox;loanboox;;;;;loanboox;https://www.facebook.com/loanboox/;268;273
+2015;www.swisspeers.ch;Fintech;Deposit & Lending;Zürich;ZH;swisspeers;https://twitter.com/swisspeers;swisspeers;;;;;Swisspeers;https://www.facebook.com/swisspeers.ch/;864;886
+2017;www.bancor.network;Fintech;Distributed Ledger Technology;Zug;ZG;bancor;https://twitter.com/bancor?lang=de;bancor;;;;;Bancor;https://www.facebook.com/bancor/;66464;66912
+2017;www.coreledger.net;Fintech;Distributed Ledger Technology;Zug;ZG;CoreLedger;https://twitter.com/CoreLedger;CoreLedger;;;;;Coreledger AG;https://www.facebook.com/coreledger.ag.1;0;0
+2017;www.cryptofinance.ch;Fintech;Distributed Ledger Technology;Zug;ZG;Crypto Finance;https://twitter.com/CryptoFinanceAG;CryptoFinanceAG;;;;;Crypto Finance AG;https://www.facebook.com/CryptoFinanceAG/;567;673
+2015;www.digitalbitbox.com;Fintech;Distributed Ledger Technology;Basel-Country;BL;BitBox | ShiftCrypto;https://twitter.com/DigitalBitbox;DigitalBitbox;;;;;Digital Bitbox;https://www.facebook.com/Digital-Bitbox-130791914294135/;36;38
+2015;www.iprotus.com;Fintech;Distributed Ledger Technology;Zug;ZG;iprotus;https://twitter.com/i_protus;i_protus;;;;;iprotus;https://www.facebook.com/iprotus/;75;72
+2013;www.lykke.com;Fintech;Distributed Ledger Technology;Zug;ZG;Lykke;https://twitter.com/lykke;lykke;;;;;Lykke;https://www.facebook.com/LykkeCity/;1257;1397
+2002;www.payment21.com;Fintech;Distributed Ledger Technology;St. Gallen;SG;Payment21®;https://twitter.com/Payment21_XBT;Payment21_XBT;;;;;Payment21;https://www.facebook.com/Payment21/;76;85
+2015;www.breadapp.com;Fintech;Distributed Ledger Technology;Zürich;ZH;BRD;https://twitter.com/breadapp;breadapp;;;;;Breadwallet - BRD;https://www.facebook.com/BreadApp/;2916;3264
+2014;www.shapeshift.io;Fintech;Distributed Ledger Technology;Zug;ZG;ShapeShift.io;https://twitter.com/ShapeShift_io;ShapeShift_io;;;;;ShapeShift.io;https://www.facebook.com/shapeshiftexchange/;48251;48889
+2017;jibrel.network;Fintech;Distributed Ledger Technology;Zug;ZG;Jibrel Network;https://twitter.com/JibrelNetwork;JibrelNetwork;;;;;Jibrel Network;https://www.facebook.com/jibrelnetwork/;5408;5553
+2013;www.bitcoinsuisse.ch;Fintech;Distributed Ledger Technology;Zug;ZG;Bitcoin Suisse;https://twitter.com/BitcoinSuisseAG;BitcoinSuisseAG;;;;;Bitcoin Suisse AG;https://www.facebook.com/BitcoinSuisse/;4713;4899
+2015;www.3rd-eyes.com;Fintech;Investment Management;Zürich;ZH;3rd-eyes.com;https://twitter.com/inside_3rd_eyes;inside_3rd_eyes;;;;;3rd-eyes;https://www.facebook.com/3rdeyesnavigationsystem/;22;24
+2012;www.aaaccell.ch;Fintech;Investment Management;Zürich;ZH;AAAccell Ltd;https://twitter.com/AAAccell1;AAAccell1;;;;;NA;NA;NA;NA
+2014;www.bbanalytics.biz;Fintech;Investment Management;Zug;ZG;B&B Analytics;https://twitter.com/BnBAnalytics;BnBAnalytics;;;;;NA;NA;NA;NA
+2016;www.clearminds.ch;Fintech;Investment Management;Basel;BS;Clear Minds;https://twitter.com/ClearMindsInv;ClearMindsInv;;;;;Clear Minds;https://www.facebook.com/clearminds.ch/;114;116
+2015;www.descartes-finance.com;Fintech;Investment Management;Zug;ZG;Descartes Finance;https://twitter.com/DescartesFin;DescartesFin;;;;;Descartes Finance;https://www.facebook.com/descartesfinance/;51;52
+2011;www.investory.ch;Fintech;Investment Management;Zürich;ZH;investory.io;https://twitter.com/investory_io;investory_io;;;;;Investory;https://www.facebook.com/investory.io/;298;307
+2014;www.purevaluemetrics.com;Fintech;Investment Management;Schwyz;SZ;PureValueMetrics;https://twitter.com/PureValueMetric;PureValueMetric;;;;;NA;NA;NA;NA
+2016;www.selmafinance.ch;Fintech;Investment Management;Schwyz;SZ;Selma;https://twitter.com/SelmaFinance;SelmaFinance;;;;;Selma Finance;https://www.facebook.com/selma.finance/;434;447
+2015;www.simplewealth.ch;Fintech;Investment Management;Zürich;ZH;Simplewealth;https://twitter.com/SimpleWealth;SimpleWealth;;;;;Simplewealth;https://www.facebook.com/Simplewealth/;128;134
+2015;www.smartmoneymatch.com;Fintech;Investment Management;Zug;ZG;SmartMoneyMatch;https://twitter.com/SmartMoneyMatch;SmartMoneyMatch;;;;;SmartMoneyMatch;https://www.facebook.com/SmartMoneyMatch;213;215
+2003;www.spectravest.ch;Fintech;Investment Management;Berne;BE;Spectravest;https://twitter.com/spectravest;spectravest;;;;;Spectravest;https://www.facebook.com/spectravest/;56;57
+2013;www.truewealth.ch;Fintech;Investment Management;Zürich;ZH;True Wealth;https://twitter.com/True_Wealth_;True_Wealth_;;;;;True Wealth;https://www.facebook.com/truewealthag/;1622;1663
+2017;www.visionand.ch;Fintech;Investment Management;Zug;ZG;vision&;https://twitter.com/visionandch;visionandch;;;;;NA;NA;NA;NA
+2016;www.werthstein.com;Fintech;Investment Management;Zürich;ZH;Werthstein;https://twitter.com/werthstein;werthstein;;;;;Werthstein;https://www.facebook.com/werthstein/;577;593
+2015;www.crowdhouse.ch;Fintech;Investment Management;Zürich;ZH;crowdhouse.ch;https://twitter.com/crowdhouse_ch;crowdhouse_ch;;;;;crowdhouse.ch;https://www.facebook.com/crowdhouseCH/;2861;2992
+2017;www.ecollect.ch;Fintech;Payment;Schwyz;SZ;eCollect;https://twitter.com/ecollect;ecollect;;;;;eCollect;https://www.facebook.com/ecollect/;128;126
+2013;www.muume.com;Fintech;Payment;Zug;ZG;MUUME;https://twitter.com/MUUME_digital;MUUME_digital;;;;;MUUME;https://www.facebook.com/MUUMEdigital/;163;166
+2014;www.sweepay.ch;Fintech;Payment;Zug;ZG;SweePay;https://twitter.com/SweePay_ltd;SweePay_ltd;;;;;NA;NA;NA;NA
+2014;www.twint.ch;Fintech;Payment;Berne;BE;TWINT;https://twitter.com/TWINT_AG;TWINT_AG;;;;;TWINT;https://www.facebook.com/twintwallet/;4795;4799

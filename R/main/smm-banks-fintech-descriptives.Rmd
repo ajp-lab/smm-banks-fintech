@@ -16,7 +16,6 @@ library(ggplot2)
 library(twitteR)
 
 
-
 ```
 
 ### Source / load necessary R functions
@@ -26,7 +25,7 @@ library(twitteR)
 getwd()
 
 # Load authentication functions
-source("../auth/auth.R")
+source("../functions/auth.R")
 
 
 
@@ -40,8 +39,6 @@ source("../auth/auth.R")
 ```{r}
 # Start Authentication to Twitter API
 auth_twitter()
-
-
 
 
 
@@ -64,22 +61,24 @@ d.file
 
 ```{r}
 
-#Show type (bank or fintech) compared to funding year
-ggplot(d.file, aes(x = Year, y = Type)) +
+# Show type (bank or fintech) compared to funding year
+ggplot(d.file, aes(x = year, y = type)) +
   geom_point() +
   xlab("Funding Year") +
   ylab("Type") +
   theme_bw()
 
-#We try some more nice plots here
+# Save to file
+ggsave("../../img/charts/chart1_type_fundingyear.png")
 
 ```
 
 
-### Access and query Twitter API - Example
+### Access and query Twitter API - Example user "ETH"
 
 ```{r}
 
+#get user "ETH"
 user=getUser("ETH")
 
 # User name
@@ -97,10 +96,79 @@ user$friendsCount
 # User tweets
 user$statusesCount
 
-
-
 ```
 
 
+### Use the input datafile, read and add all Twitter metadata to the given accounts, and write everything to an output file, for further analysis and descriptive statistics.
+
+```{r}
+# Show file
+(d.file)
+
+# Count rows of file
+nrow(d.file)
+
+# Add all Twitter metadata to the dataset
+for (i in 1:nrow(d.file)) {
+
+  # Skip an API request if value is NA, go to next iteration
+  if(is.na(d.file[i, 'tw_parse'])) next 
+
+  user = getUser(d.file[i, 'tw_parse'])
+  
+  d.file[i,'tw_favorites'] <- user$favoritesCount
+  d.file[i,'tw_followers'] <- user$followersCount
+  d.file[i,'tw_friends']   <- user$friendsCount
+  d.file[i,'tw_statuses']  <- user$statusesCount
+  
+}
+
+# Save and write as Rdata file to output directory
+save(d.file, file = '../../data/output/smm-banks-fintech-output-descriptives.Rdata')
+
+```
+
+### Show some descriptive statistics and plots
+
+```{r}
+
+# Load the saved file (we don´t have to go through the whole process above again)
+load('../../data/output/smm-banks-fintech-output-descriptives.Rdata')
+d.file
+d.cleanfile <- (na.omit(d.file))
+nrow(d.cleanfile)
+str(d.cleanfile)
+
+d.cleanfile
+
+# Chart: Tw followers vs. Fb followers
+ggplot(d.cleanfile, aes(x=tw_followers, y=fb_followers)) +
+  geom_point(aes(color=as.factor(type))) +
+  labs(x = "Twitter followers", y = "Facebook followers")+
+  scale_color_discrete(name=("Type"))+
+  ylim(c(0,4500))+
+  xlim(c(0,2600))
+
+ggsave("../../img/charts/chart2_twfollowers_fbfollowers.png")
+
+# Chart: Tw favorites vs. Fb favorites
+ggplot(d.cleanfile, aes(x=tw_favorites, y=fb_favorites)) +
+  geom_point(aes(color=as.factor(type))) +
+  labs(x = "Twitter favorites", y = "Facebook favorites")+
+  scale_color_discrete(name=("Type"))+
+  ylim(c(0,5000))+
+  xlim(c(0,2000))
+
+ggsave("../../img/charts/chart3_twfavorites_fbfavorites.png")
+
+# Chart: Boxplot Tw followers
+ggplot(d.cleanfile) +
+  geom_boxplot(aes(type, tw_followers),color="black") +
+  labs(x = "Type", y = "Twitter followers")+
+  ylim(c(0,10000))
+
+ggsave("../../img/charts/chart4_boxplot_twfollowers.png")
+
+```
 
 
