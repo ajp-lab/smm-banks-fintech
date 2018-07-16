@@ -1,7 +1,7 @@
 #==============================================================================
 # File: auth.R
 # Author: A. Pucher
-# Purpose: Functions for getting access to Twitter and Facebook APIs,
+# Purpose: Functions for getting access to APIs,
 #          authentication with keys and access tokens
 # Comment: Check https://csgillespie.github.io/efficientR/r-startup.html#renviron
 #==============================================================================
@@ -11,7 +11,7 @@
 ### A parameter in ".Renviron" looks like this:
 ### tw_consumer_key = "secretxyz"
 
-### Get access to TW
+### Get access to TWITTER
 auth_twitter <- function() {
   
   require(twitteR)
@@ -20,3 +20,15 @@ auth_twitter <- function() {
                       Sys.getenv("tw_access_token"),
                       Sys.getenv("tw_access_secret"))
 }
+
+### Get access to LINKEDIN
+auth_linkedin <- function() {
+  
+  require(Rlinkedin)
+  in.auth <- inOAuth(Sys.getenv("li_app_name"),
+                      Sys.getenv("li_consumer_key"),
+                      Sys.getenv("li_consumer_secret"))
+  
+  return(in.auth)
+  
+  }

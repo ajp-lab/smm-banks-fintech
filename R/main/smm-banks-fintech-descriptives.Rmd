@@ -14,6 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 library(ggplot2)
 library(twitteR)
+library(Rlinkedin)
 
 
 ```
@@ -32,15 +33,16 @@ source("../functions/auth.R")
 ```
 
 
-
 ### Authentication to Twitter API (works, July 2018)
-### Authentication to FB API: This is unfortunately not supported anymore (Cambridge Analytica scandal)! Check: http://theconversation.com/facebooks-data-lockdown-is-a-disaster-for-academic-researchers-94533
+### Authentication to LinkedIn API (works, July 2018)
+### Authentication to FB API: This is unfortunately not supported anymore! Check: http://theconversation.com/facebooks-data-lockdown-is-a-disaster-for-academic-researchers-94533
 
 ```{r}
 # Start Authentication to Twitter API
 auth_twitter()
 
-
+#Start Authentication to LinkedIn API
+in.auth <- auth_linkedin()
 
 ```
 
@@ -97,6 +99,25 @@ user$friendsCount
 user$statusesCount
 
 ```
+
+
+### Access and query LinkedIn API - Example user "LinkedIn"
+### Only basic profile metadata available, for everything else you need to be a member of the Partnership Program...
+
+```{r}
+search.comp <- searchCompanies(in.auth, keywords = "LinkedIn")
+head(search.comp)
+
+getProfile(token = in.auth, connections = FALSE, id = NULL)
+
+#does not work - restricted
+my.groups <- getGroups(token = in.auth, details=TRUE)
+#does not work - restricted
+search.results <- searchJobs(token = in.auth, keywords = "data scientist")
+
+
+```
+
 
 
 ### Use the input datafile, read and add all Twitter metadata to the given accounts, and write everything to an output file, for further analysis and descriptive statistics.
