@@ -51,7 +51,8 @@ in.auth <- auth_linkedin()
 ```{r}
 getwd()
 
-d.file <- read.csv("../../data/input/smm-banks-fintech-input-dataset.csv", sep=";", head=TRUE, stringsAsFactors=FALSE, encoding = "UTF-8")
+# Read csv, use ANSI encoding
+d.file <- read.csv("../../data/input/smm-banks-fintech-input-dataset.csv", sep=";", head=TRUE, stringsAsFactors=FALSE, encoding = "ANSI")
 head(d.file)
 dim(d.file)
 
@@ -133,7 +134,7 @@ nrow(d.file)
 for (i in 1:nrow(d.file)) {
 
   # Skip an API request if value is NA, go to next iteration
-  if(is.na(d.file[i, 'tw_parse'])) next 
+  if(is.na(d.file[i, 'tw_parse'])) next
 
   user = getUser(d.file[i, 'tw_parse'])
   
@@ -157,6 +158,7 @@ save(d.file, file = '../../data/output/smm-banks-fintech-output-descriptives.Rda
 load('../../data/output/smm-banks-fintech-output-descriptives.Rdata')
 d.file
 d.cleanfile <- (na.omit(d.file))
+
 nrow(d.cleanfile)
 str(d.cleanfile)
 
@@ -189,6 +191,40 @@ ggplot(d.cleanfile) +
   ylim(c(0,10000))
 
 ggsave("../../img/charts/chart4_boxplot_twfollowers.png")
+
+# Chart: Fb favorites vs. employees
+ggplot(d.cleanfile, aes(x=employees, y=fb_favorites)) +
+  geom_point(aes(color=as.factor(type))) +
+  labs(x = "Employees", y = "Facebook favorites")+
+  scale_color_discrete(name=("Type"))+
+  ylim(c(0,6000))+
+  xlim(c(0,2000))
+
+ggsave("../../img/charts/chart5_employees_fb_favorites.png")
+
+
+# Chart: Fb followers vs. employees
+ggplot(d.cleanfile, aes(x=employees, y=fb_followers)) +
+  geom_point(aes(color=as.factor(type))) +
+  labs(x = "Employees", y = "Facebook followers")+
+  scale_color_discrete(name=("Type"))+
+  ylim(c(0,6000))+
+  xlim(c(0,2000))
+
+ggsave("../../img/charts/chart6_employees_fb_followers.png")
+
+
+# Chart: Tw followers vs. employees
+ggplot(d.cleanfile, aes(x=employees, y=tw_followers)) +
+  geom_point(aes(color=as.factor(type))) +
+  labs(x = "Employees", y = "Twitter followers")+
+  scale_color_discrete(name=("Type"))+
+  ylim(c(0,6000))+
+  xlim(c(0,2000))
+
+ggsave("../../img/charts/chart7_employees_tw_followers.png")
+
+
 
 ```
 
