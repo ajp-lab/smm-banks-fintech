@@ -150,8 +150,7 @@ save(d.file, file = '../../data/output/smm-banks-fintech-output-descriptives.Rda
 
 ```
 
-### Show some descriptive statistics and plots
-
+### Load data file
 ```{r}
 
 # Load the saved file (we don´t have to go through the whole process above again)
@@ -163,7 +162,11 @@ nrow(d.cleanfile)
 str(d.cleanfile)
 
 d.cleanfile
+```
 
+
+### Show some descriptive statistics and plots (not normalized)
+```{r}
 # Chart: Tw followers vs. Fb followers
 ggplot(d.cleanfile, aes(x=tw_followers, y=fb_followers)) +
   geom_point(aes(color=as.factor(type))) +
@@ -223,6 +226,35 @@ ggplot(d.cleanfile, aes(x=employees, y=tw_followers)) +
   xlim(c(0,2000))
 
 ggsave("../../img/charts/chart7_employees_tw_followers.png")
+
+
+# Chart: Tweets vs. employees
+ggplot(d.cleanfile, aes(x=employees, y=tw_statuses)) +
+  geom_point(aes(color=as.factor(type))) +
+  labs(x = "Employees", y = "Tweets")+
+  scale_color_discrete(name=("Type"))+
+  ylim(c(0,10000))+
+  xlim(c(0,10000))
+
+ggsave("../../img/charts/chart8_employees_tw_statuses.png")
+
+
+
+```
+
+
+### Load data file, convert it to dataframe
+```{r}
+
+# Load the saved file (we don´t have to go through the whole process above again)
+load('../../data/output/smm-banks-fintech-output-descriptives.Rdata')
+d.file
+
+#dfNormZ <- as.data.frame( scale(df[1:2] ))
+
+df <- as.data.frame(scale(d.file[,c("employees", "tw_favorites", "tw_followers", "tw_friends", "tw_statuses", "fb_favorites", "fb_followers")]))
+df
+
 
 
 

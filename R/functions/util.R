@@ -9,3 +9,6 @@
 normalize <- function(x) {
   return ((x - min(x)) / (max(x) - min(x)))
 }
+
+# Alternatively, use Z-score standardization
+# e.g. dfNormZ <- as.data.frame( scale(df[1:2] ))
