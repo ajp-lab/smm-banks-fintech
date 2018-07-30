@@ -280,9 +280,20 @@ save(df, file = '../../data/output/smm-banks-fintech-output-descr-znorm-and-rati
 
 ```
 
-# Load the saved file (we don´t have to go through the whole process above again)
+### Load the saved file (we don´t have to go through the whole process above again)
 ```{r}
 load('../../data/output/smm-banks-fintech-output-descr-znorm-and-ratio.Rdata')
+
+
+```
+
+### Normalized plots
+```{r}
+# Chart: Norm Tw followers vs. Fb followers
+ggplot(df, aes(x=normz_tw_followers, y=normz_fb_followers)) +
+  geom_point(aes(color=as.factor(type))) +
+  labs(x = "Twitter followers", y = "Facebook followers")+
+  scale_color_discrete(name=("Type"))
 
 
 
