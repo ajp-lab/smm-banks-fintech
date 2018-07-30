@@ -27,6 +27,8 @@ getwd()
 
 # Load authentication functions
 source("../functions/auth.R")
+# Load utils
+source("../functions/util.R")
 
 
 
@@ -243,21 +245,45 @@ ggsave("../../img/charts/chart8_employees_tw_statuses.png")
 ```
 
 
-### Load data file, convert it to dataframe
+### Load data file, convert it to dataframe, normalize values with z standardization and calc. employee to tw / fb numbers as percentage / ratio
 ```{r}
 
-# Load the saved file (we don´t have to go through the whole process above again)
+# Load the saved file (we don´t have to go through the whole process from above again)
 load('../../data/output/smm-banks-fintech-output-descriptives.Rdata')
 d.file
+df <- as.data.frame(d.file)
 
-#dfNormZ <- as.data.frame( scale(df[1:2] ))
+# Do normalization - Z standardization
+dfNormZ <- as.data.frame(scale(d.file[,c("employees", "tw_favorites", "tw_followers", "tw_friends", "tw_statuses", "fb_favorites", "fb_followers")]))
 
-df <- as.data.frame(scale(d.file[,c("employees", "tw_favorites", "tw_followers", "tw_friends", "tw_statuses", "fb_favorites", "fb_followers")]))
+# Add new values as columns to the dataframe df
+df$normz_employees = dfNormZ$employees
+df$normz_tw_favorites = dfNormZ$tw_favorites
+df$normz_tw_followers = dfNormZ$tw_followers
+df$normz_tw_friends = dfNormZ$tw_friends
+df$normz_tw_statuses = dfNormZ$tw_statuses
+df$normz_fb_favorites = dfNormZ$fb_favorites
+df$normz_fb_followers = dfNormZ$fb_followers
+
+# Calculate employee and tw / fb numbers as percentage / ratio
+df$ratio_tw_favorites = df$tw_favorites/df$employees*100
+df$ratio_tw_followers = df$tw_followers/df$employees*100
+df$ratio_tw_friends = df$tw_friends/df$employees*100
+df$ratio_tw_statuses = df$tw_statuses/df$employees*100
+df$ratio_fb_favorites = df$fb_favorites/df$employees*100
+df$ratio_fb_followers = df$fb_followers/df$employees*100
+
 df
 
+# Save and write as Rdata file to output directory
+save(df, file = '../../data/output/smm-banks-fintech-output-descr-znorm-and-ratio.Rdata')
+
+```
+
+# Load the saved file (we don´t have to go through the whole process above again)
+```{r}
+load('../../data/output/smm-banks-fintech-output-descr-znorm-and-ratio.Rdata')
 
 
 
 ```
-
-
