@@ -15,6 +15,8 @@ knitr::opts_chunk$set(echo = TRUE)
 library(ggplot2)
 library(twitteR)
 library(Rlinkedin)
+library(reshape2)
+library(dplyr)
 
 
 ```
@@ -281,19 +283,40 @@ save(df, file = '../../data/output/smm-banks-fintech-output-descr-znorm-and-rati
 ```
 
 ### Load the saved file (we don´t have to go through the whole process above again)
+### Melt data for ggplot2, and filter
 ```{r}
 load('../../data/output/smm-banks-fintech-output-descr-znorm-and-ratio.Rdata')
 
+df
+
+dfm <- melt(data = df, id.vars = c("year", "name", "type", "category", "place", "canton"), 
+            measure.vars = c("employees", "tw_favorites", "tw_followers", "tw_friends", "tw_statuses", "fb_favorites", "fb_followers", "normz_employees",
+                             "normz_tw_favorites", "normz_tw_followers", "normz_tw_friends", "normz_tw_statuses", "normz_fb_favorites", "normz_fb_followers","ratio_tw_favorites",
+                             "ratio_tw_followers", "ratio_tw_friends", "ratio_tw_statuses", "ratio_fb_favorites", "ratio_fb_followers"))
+
+dfm
+
+dfmf_normz <- filter(dfm, variable == "normz_employees" | variable == "normz_tw_favorites" | variable == "normz_tw_followers" | variable ==  "normz_tw_friends" | variable == "normz_tw_statuses" | variable ==  "normz_fb_favorites" | variable ==  "normz_fb_followers" )
+
+dfmf_ratio <- filter(dfm, variable == "ratio_tw_favorites" | variable == "ratio_tw_followers" | variable == "ratio_tw_friends" | variable == "ratio_tw_statuses" | variable == "ratio_fb_favorites" | variable == "ratio_fb_followers")
+
+dfmf_normz
+dfmf_ratio
 
 ```
 
-### Normalized plots
+### Normalized / ratio plots
 ```{r}
-# Chart: Norm Tw followers vs. Fb followers
-ggplot(df, aes(x=normz_tw_followers, y=normz_fb_followers)) +
+# First test chart: Ratio Tw followers vs. Fb followers, Log10 scale
+ggplot(df, aes(x=log10(ratio_tw_followers), y=log10(ratio_fb_followers))) +
   geom_point(aes(color=as.factor(type))) +
   labs(x = "Twitter followers", y = "Facebook followers")+
   scale_color_discrete(name=("Type"))
+
+
+
+
+
 
 
 
