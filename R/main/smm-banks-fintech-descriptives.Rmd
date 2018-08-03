@@ -289,8 +289,8 @@ load('../../data/output/smm-banks-fintech-output-descr-znorm-and-ratio.Rdata')
 
 df
 
-dfm <- melt(data = df, id.vars = c("year", "name", "type", "category", "place", "canton"), 
-            measure.vars = c("employees", "tw_favorites", "tw_followers", "tw_friends", "tw_statuses", "fb_favorites", "fb_followers", "normz_employees",
+dfm <- melt(data = df, id.vars = c("year", "name", "type", "category", "place", "canton", "employees"), 
+            measure.vars = c("tw_favorites", "tw_followers", "tw_friends", "tw_statuses", "fb_favorites", "fb_followers", "normz_employees",
                              "normz_tw_favorites", "normz_tw_followers", "normz_tw_friends", "normz_tw_statuses", "normz_fb_favorites", "normz_fb_followers","ratio_tw_favorites",
                              "ratio_tw_followers", "ratio_tw_friends", "ratio_tw_statuses", "ratio_fb_favorites", "ratio_fb_followers"))
 
@@ -307,17 +307,30 @@ dfmf_ratio
 
 ### Normalized / ratio plots
 ```{r}
+
+options(scipen=999)  # turn-off scientific notation like 1e+48
+
 # First test chart: Ratio Tw followers vs. Fb followers, Log10 scale
 ggplot(df, aes(x=log10(ratio_tw_followers), y=log10(ratio_fb_followers))) +
   geom_point(aes(color=as.factor(type))) +
   labs(x = "Twitter followers", y = "Facebook followers")+
   scale_color_discrete(name=("Type"))
 
+# Chart: Social Media Activity Ratio Per Category
+# Create labels for chart
+SocMedActLabs <- c("TW Favorites", "TW Followers", "TW Friends", "TW Statuses", "FB Favorites", "FB Followers")
 
+ggplot(dfmf_ratio, aes(x=(variable), y=log10(value)) ) + 
+  geom_point(aes(col=as.factor(type), size=employees)) + 
+  labs(y="Ratio (log10 scale)", 
+       x="Social Media Activity", 
+       title="Social Media Activity Ratio Normalized on Employee Size")+
+  scale_color_discrete(name="Type") +
+  scale_size_continuous(name="Employee size")+
+  scale_x_discrete(labels=SocMedActLabs)+
+  theme(axis.text.x = element_text(angle=45, vjust=0.5, size=10))
 
-
-
-
+ggsave("../../img/charts-normalized/chart1_sma_ratio_norm_on_empl_size.png")
 
 
 ```
