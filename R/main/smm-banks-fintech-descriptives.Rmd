@@ -333,7 +333,7 @@ ggsave("../../img/charts-ratio/chart1_smat_comp_to_smar.png")
 ```{r}
 # Chart: Boxplot Social Media Activity Ratio (SMAR) Compared to Entity Type Total
 ggplot(dfmf_ratio) +
-  geom_boxplot(aes(type, log10(value))) +
+  geom_boxplot(aes(type, log10(value), col=as.factor(type))) +
   labs(x = "Type", y = "SMAR (log10 scale)",
        title="Social Media Activity Ratio (SMAR) Compared to Entity Type Total")
 
@@ -346,7 +346,8 @@ ggplot(dfmf_ratio, aes(x=log10(employees), y=log10(value)) ) +
   geom_point(aes(col=as.factor(type) )) +
   labs(x = "Employee Size (log10 scale)", y = "SMAR (log10 scale)",
        title="Social Media Activity Ratio (SMAR) Compared to Employee Size Total") +
-  scale_color_discrete(name="Entity Type")
+  scale_color_discrete(name="Entity Type")+
+  geom_smooth(method = "loess", span=0.75)
 
 ggsave("../../img/charts-ratio/chart3_smar_comp_to_employee_size_total.png")
 ```
@@ -355,11 +356,11 @@ ggsave("../../img/charts-ratio/chart3_smar_comp_to_employee_size_total.png")
 
 dfmf_ratio_sorted <-na.omit(dfmf_ratio)
 dfmf_ratio_sorted <-dfmf_ratio_sorted[order(dfmf_ratio_sorted$type, dfmf_ratio_sorted$category, dfmf_ratio_sorted$value),]
-dfmf_ratio_sorted
+dfmf_ratio_sorted <-reorder(dfmf_ratio_sorted)
 
 # Chart: Boxplot Social Media Activity Ratio (SMAR) Compared to Entity Category
 ggplot(dfmf_ratio_sorted) +
-  geom_boxplot(aes(as.factor(category), y=log10(value), col=as.factor(type) ) ) +
+  geom_boxplot(aes(x=reorder(category,(value), FUN=median), y=log10(value), col=as.factor(type) ) ) +
   labs(x = "Entity Category", y = "SMAR (log10 scale)",
     title="Social Media Activity Ratio (SMAR) Compared to Entity Category Total")+
   scale_color_discrete(name="Entity Type")+
