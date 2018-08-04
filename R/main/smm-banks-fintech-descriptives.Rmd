@@ -16,7 +16,6 @@ library(ggplot2)
 library(twitteR)
 library(reshape2)
 library(dplyr)
-library(forcats)
 
 # Inactive
 # library(Rlinkedin)
@@ -335,7 +334,8 @@ ggsave("../../img/charts-ratio/chart1_smat_comp_to_smar.png")
 ggplot(dfmf_ratio) +
   geom_boxplot(aes(type, log10(value), col=as.factor(type))) +
   labs(x = "Type", y = "SMAR (log10 scale)",
-       title="Social Media Activity Ratio (SMAR) Compared to Entity Type Total")
+       title="Social Media Activity Ratio (SMAR) Compared to Entity Type Total")+
+  scale_color_discrete(name="Entity Type")
 
 ggsave("../../img/charts-ratio/chart2_smar_comp_to_entity_type_total.png")
 ```
