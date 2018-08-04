@@ -14,10 +14,12 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 library(ggplot2)
 library(twitteR)
-library(Rlinkedin)
 library(reshape2)
 library(dplyr)
+library(forcats)
 
+# Inactive
+# library(Rlinkedin)
 
 ```
 
@@ -169,7 +171,7 @@ d.cleanfile
 ```
 
 
-### Show some descriptive statistics and plots (not normalized)
+### EDA: Some first explorative data analysis, show some descriptive statistics and plots (not normalized)
 ```{r}
 # Chart: Tw followers vs. Fb followers
 ggplot(d.cleanfile, aes(x=tw_followers, y=fb_followers)) +
@@ -305,32 +307,64 @@ dfmf_ratio
 
 ```
 
-### Normalized / ratio plots
+### Descriptive Stats: SMA (Social Media Activity) Ratio Plots
 ```{r}
 
 options(scipen=999)  # turn-off scientific notation like 1e+48
 
-# First test chart: Ratio Tw followers vs. Fb followers, Log10 scale
-ggplot(df, aes(x=log10(ratio_tw_followers), y=log10(ratio_fb_followers))) +
-  geom_point(aes(color=as.factor(type))) +
-  labs(x = "Twitter followers", y = "Facebook followers")+
-  scale_color_discrete(name=("Type"))
-
-# Chart: Social Media Activity Ratio Per Category
-# Create labels for chart
+# Create labels for charts
 SocMedActLabs <- c("TW Favorites", "TW Followers", "TW Friends", "TW Statuses", "FB Favorites", "FB Followers")
 
+# Chart: Social Media Activity Type (SMAT) Compared to Social Media Activity Ratio (SMAR)
 ggplot(dfmf_ratio, aes(x=(variable), y=log10(value)) ) + 
   geom_point(aes(col=as.factor(type), size=employees)) + 
-  labs(y="Ratio (log10 scale)", 
-       x="Social Media Activity", 
-       title="Social Media Activity Ratio Normalized on Employee Size")+
-  scale_color_discrete(name="Type") +
-  scale_size_continuous(name="Employee size")+
+  labs(y="SMAR (log10 scale)", 
+       x="SMAT", 
+       title="Social Media Activity Type (SMAT) Compared to Social Media Activity Ratio (SMAR)")+
+  scale_color_discrete(name="Entity Type") +
+  scale_size_continuous(name="Employee Size")+
   scale_x_discrete(labels=SocMedActLabs)+
   theme(axis.text.x = element_text(angle=45, vjust=0.5, size=10))
 
-ggsave("../../img/charts-normalized/chart1_sma_ratio_norm_on_empl_size.png")
+ggsave("../../img/charts-ratio/chart1_smat_comp_to_smar.png")
+```
 
+
+```{r}
+# Chart: Boxplot Social Media Activity Ratio (SMAR) Compared to Entity Type Total
+ggplot(dfmf_ratio) +
+  geom_boxplot(aes(type, log10(value))) +
+  labs(x = "Type", y = "SMAR (log10 scale)",
+       title="Social Media Activity Ratio (SMAR) Compared to Entity Type Total")
+
+ggsave("../../img/charts-ratio/chart2_smar_comp_to_entity_type_total.png")
+```
+
+```{r}
+# Chart: Employee size vs. Social Media Activity Total
+ggplot(dfmf_ratio, aes(x=log10(employees), y=log10(value)) ) +
+  geom_point(aes(col=as.factor(type) )) +
+  labs(x = "Employee Size (log10 scale)", y = "SMAR (log10 scale)",
+       title="Social Media Activity Ratio (SMAR) Compared to Employee Size Total") +
+  scale_color_discrete(name="Entity Type")
+
+ggsave("../../img/charts-ratio/chart3_smar_comp_to_employee_size_total.png")
+```
+
+```{r}
+
+dfmf_ratio_sorted <-na.omit(dfmf_ratio)
+dfmf_ratio_sorted <-dfmf_ratio_sorted[order(dfmf_ratio_sorted$type, dfmf_ratio_sorted$category, dfmf_ratio_sorted$value),]
+dfmf_ratio_sorted
+
+# Chart: Boxplot Social Media Activity Ratio (SMAR) Compared to Entity Category
+ggplot(dfmf_ratio_sorted) +
+  geom_boxplot(aes(as.factor(category), y=log10(value), col=as.factor(type) ) ) +
+  labs(x = "Entity Category", y = "SMAR (log10 scale)",
+    title="Social Media Activity Ratio (SMAR) Compared to Entity Category Total")+
+  scale_color_discrete(name="Entity Type")+
+  coord_flip()
+
+ggsave("../../img/charts-ratio/chart4_smar_comp_to_entity_category.png")
 
 ```
