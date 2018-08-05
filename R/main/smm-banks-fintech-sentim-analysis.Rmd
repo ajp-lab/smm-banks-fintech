@@ -31,8 +31,6 @@ source("../functions/auth.R")
 # Load utils
 source("../functions/util.R")
 
-
-
 ```
 
 ### Authentication to Twitter API (works, July 2018)
@@ -41,22 +39,17 @@ source("../functions/util.R")
 # Start Authentication to Twitter API
 auth_twitter()
 
-
 ```
 
-### Starting sentiment analysis
+### Starting sentiment analysis, first examples
 ```{r}
 
 load('../../data/output/smm-banks-fintech-output-descr-ratio-melted.Rdata')
 options(scipen=999)  # turn-off scientific notation like 1e+48
 
-```
-
-### Starting sentiment analysis
-```{r}
+#Some examples
 
 #Trends in ZRH, Switzerland
-
 #return data frame with name, country & woeid. 
 Locs <- availableTrendLocations()
 # Where woeid is a numerical identification code describing a location ID
@@ -67,11 +60,36 @@ woeidZurich = subset(LocsCH, name == "Zurich")$woeid
 trends = getTrends(woeid=woeidZurich)
 trends
 
-
+# Search tweets about "Swiss Bank in a specific time range"
 head(searchTwitter('Swiss Bank', since='2015-08-01', until= '2018-08-05'))
+# Search for ubsschweiz tweets
+ubsschweiz_tweets <- searchTwitter("ubsschweiz", n=500, lang="de")
+str(ubsschweiz_tweets)
 
-ubsschweiz_tweets = searchTwitter("ubsschweiz", n=500, lang="de")
-ubsschweiz_tweets
+```
+
+
+### Starting sentiment analysis with fintech sector, using tidytext, lang=en
+```{r}
+# Load again initial file (before norm and ratio calculations)
+load('../../data/output/smm-banks-fintech-output-descriptives.Rdata')
+options(scipen=999)  # turn-off scientific notation like 1e+48
+
+d.file
+
+# Filter type "Fintech"
+df_sa_fintech <- filter(d.file, type == "Fintech")
+df_sa_fintech
+
+# Subselect account name for Twitter search "tw_parse"
+df_sub_sa_ft <- subset(df_sa_fintech, select=c("tw_parse"))
+df_sub_sa_ft <- na.omit(df_sub_sa_ft)
+df_sub_sa_ft
+
+account = c("ubsschweiz")
+
+df_test = twListToDF(ubsschweiz_tweets)
+df_test
 
 ```
 
