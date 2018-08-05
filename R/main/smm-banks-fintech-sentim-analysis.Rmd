@@ -16,6 +16,10 @@ library(ggplot2)
 library(twitteR)
 library(reshape2)
 library(dplyr)
+library(magrittr)
+library(tidytext)
+library(ggrepel)
+
 
 
 ```
@@ -62,14 +66,16 @@ trends
 
 # Search tweets about "Swiss Bank in a specific time range"
 head(searchTwitter('Swiss Bank', since='2015-08-01', until= '2018-08-05'))
+
 # Search for ubsschweiz tweets
 ubsschweiz_tweets <- searchTwitter("ubsschweiz", n=500, lang="de")
+zkbch_tweets <- searchTwitter("zkb_ch", n=500, lang="de")
 str(ubsschweiz_tweets)
 
 ```
 
 
-### Starting sentiment analysis with fintech sector, using tidytext, lang=en
+### Starting sentiment analysis with loading data from fintech sector, using tidytext, lang=en
 ```{r}
 # Load again initial file (before norm and ratio calculations)
 load('../../data/output/smm-banks-fintech-output-descriptives.Rdata')
@@ -86,10 +92,138 @@ df_sub_sa_ft <- subset(df_sa_fintech, select=c("tw_parse"))
 df_sub_sa_ft <- na.omit(df_sub_sa_ft)
 df_sub_sa_ft
 
-account = c("ubsschweiz")
 
-df_test = twListToDF(ubsschweiz_tweets)
-df_test
+# Create list of dataframes of each account
+fintech_list = list()
+
+for (i in 1:nrow(df_sub_sa_ft)) {
+  print (i)
+  
+  tweets <- searchTwitter(df_sub_sa_ft$tw_parse[i], n=500, lang="en")
+  
+  if (length(tweets) != 0) {
+    tweetsDF <- twListToDF(tweets) # Convert to DF
+    tweetsDF$tw_parse <- df_sub_sa_ft$tw_parse[i] # Keep track from which account parsed
+    fintech_list[[i]] <- tweetsDF # Add it to your list
+  }
+  
+}
+
+# Bind rows - final data
+fintech_data_all_tweets <- dplyr::bind_rows(fintech_list)
+# Save
+save(fintech_data_all_tweets, file = '../../data/output/smm-banks-fintech-output-fintech-data-all-tweets.Rdata')
+
+fintech_data_all_tweets
 
 ```
 
+### Cleaning fintech data
+### Kudos to https://www.datacamp.com/community/tutorials/sentiment-analysis-R
+```{r}
+# Load data
+load('../../data/output/smm-banks-fintech-output-fintech-data-all-tweets.Rdata')
+
+glimpse(fintech_data_all_tweets)
+
+#Created in the first tutorial
+undesirable_words <- c(" ai ", " ca ", " la ", "hey", " na ", " da ", " uh ", " tin ", "  ll",  "la", "da", "uh", "ah")
+
+#Create tidy text format: Unnested, Unsummarized, -Undesirables, Stop and Short words
+ft_data_tidy <- fintech_data_all_tweets %>%
+  unnest_tokens(word, text) %>% #Break the text into individual words
+  filter(!word %in% undesirable_words) %>% #Remove undesirables
+  filter(!nchar(word) < 3) %>% #Words like "ah" or "oo"
+  anti_join(stop_words) #Data provided by the tidytext package
+
+glimpse(ft_data_tidy)
+
+```
+
+### Create sentiment datasets (bing, nrc, nrc polarity)
+### Kudos to https://www.datacamp.com/community/tutorials/sentiment-analysis-R
+```{r}
+ft_data_bing <- ft_data_tidy %>%
+  inner_join(get_sentiments("bing"))
+
+ft_data_nrc <- ft_data_tidy %>%
+  inner_join(get_sentiments("nrc"))
+
+ft_data_nrc_sub <- ft_data_tidy %>%
+  inner_join(get_sentiments("nrc")) %>%
+  filter(!sentiment %in% c("positive", "negative"))
+
+```
+
+### Plotting first sentiment analysis results
+### Kudos to https://www.datacamp.com/community/tutorials/sentiment-analysis-R
+```{r}
+
+# Plotting word count
+nrc_plot <- ft_data_nrc %>%
+  group_by(sentiment) %>%
+  summarise(word_count = n()) %>%
+  ungroup() %>%
+  mutate(sentiment = reorder(sentiment, word_count)) %>%
+  #Use `fill = -word_count` to make the larger bars darker
+  ggplot(aes(sentiment, word_count, fill = -word_count)) +
+  geom_col() +
+  guides(fill = FALSE) + #Turn off the legend
+  labs(x = NULL, y = "Word Count") +
+  scale_y_continuous(limits = c(0, 3000)) + #Hard code the axis limit
+  ggtitle("Entity Type Fintech: Word Count - NRC Sentiment") +
+  coord_flip()
+nrc_plot
+
+ggsave("../../img/charts-sent-analysis/chart1_s-a-nrc-word-count.png")
+
+# Plotting NRC sentiments with words, which triggered those sentiments
+plot_words <- ft_data_nrc %>%
+  group_by(sentiment) %>%
+  count(word, sort = TRUE) %>%
+  arrange(desc(n)) %>%
+  slice(seq_len(8)) %>% #consider top_n() from dplyr also
+  ungroup()
+
+plot_words %>%
+  #Set `y = 1` to just plot one variable and use word as the label
+  ggplot(aes(word, 1, label = word, fill = sentiment )) +
+  #You want the words, not the points
+  geom_point(color = "transparent") +
+  #Make sure the labels don't overlap
+  geom_label_repel(force = 1,nudge_y = .5,  
+                   direction = "y",
+                   box.padding = 0.04,
+                   segment.color = "transparent",
+                   size = 3) +
+  facet_grid(~sentiment) +
+  theme(axis.text.y = element_blank(), axis.text.x = element_blank(),
+        axis.title.x = element_text(size = 6),
+        panel.grid = element_blank(), panel.background = element_blank(),
+        panel.border = element_rect("lightgray", fill = NA),
+        strip.text.x = element_text(size = 9)) +
+  xlab(NULL) + ylab(NULL) +
+  ggtitle("Entity Type Fintech: Trigger Words - NRC Sentiment") +
+  coord_flip()
+
+ggsave("../../img/charts-sent-analysis/chart2_s-a-nrc-words-sentiments.png")
+
+# Plotting AFINN histogram
+ft_data_afinn <- ft_data_tidy %>%
+  inner_join(get_sentiments("afinn"))
+
+ggplot(data=ft_data_afinn, aes(x=ft_data_afinn$score)) + 
+  geom_histogram(breaks=seq(-10, 10, by=1), 
+                 col="black", 
+                 fill="blue", 
+                 alpha = .2) + 
+  labs(title="Entity Type Fintech: Histogram AFINN Senti-Score", x="Score", y="Frequency")
+
+ggsave("../../img/charts-sent-analysis/chart3_s-a-afinn-hist-senti-score.png")
+
+# SD, Mean, Median
+ft_hist_afinn <- c(sd(ft_data_afinn$score), mean(ft_data_afinn$score), median(ft_data_afinn$score))
+ft_hist_afinn
+
+
+```
