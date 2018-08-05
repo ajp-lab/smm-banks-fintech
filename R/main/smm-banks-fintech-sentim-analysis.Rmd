@@ -1,0 +1,77 @@
+---
+title: "MAS-Thesis-SMM-and-Trend-Monitoring-Sentiment-Analysis"
+author: "ajpucher"
+date: "2018 M08 5"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Inventory of all libs / load all libs here
+
+```{r}
+library(ggplot2)
+library(twitteR)
+library(reshape2)
+library(dplyr)
+
+
+```
+
+### Source / load necessary R functions
+
+```{r}
+# Current working dir
+getwd()
+
+# Load authentication functions
+source("../functions/auth.R")
+# Load utils
+source("../functions/util.R")
+
+
+
+```
+
+### Authentication to Twitter API (works, July 2018)
+
+```{r}
+# Start Authentication to Twitter API
+auth_twitter()
+
+
+```
+
+### Starting sentiment analysis
+```{r}
+
+load('../../data/output/smm-banks-fintech-output-descr-ratio-melted.Rdata')
+options(scipen=999)  # turn-off scientific notation like 1e+48
+
+```
+
+### Starting sentiment analysis
+```{r}
+
+#Trends in ZRH, Switzerland
+
+#return data frame with name, country & woeid. 
+Locs <- availableTrendLocations()
+# Where woeid is a numerical identification code describing a location ID
+# Filter the data frame for Delhi (India) and extract the woeid of the same
+LocsCH = subset(Locs, country == "Switzerland") 
+woeidZurich = subset(LocsCH, name == "Zurich")$woeid
+# getTrends takes a specified woeid and returns the trending topics associated with that woeid
+trends = getTrends(woeid=woeidZurich)
+trends
+
+
+head(searchTwitter('Swiss Bank', since='2015-08-01', until= '2018-08-05'))
+
+ubsschweiz_tweets = searchTwitter("ubsschweiz", n=500, lang="de")
+ubsschweiz_tweets
+
+```
+

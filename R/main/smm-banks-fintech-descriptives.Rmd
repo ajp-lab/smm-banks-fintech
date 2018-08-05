@@ -284,7 +284,7 @@ save(df, file = '../../data/output/smm-banks-fintech-output-descr-znorm-and-rati
 ```
 
 ### Load the saved file (we don´t have to go through the whole process above again)
-### Melt data for ggplot2, and filter
+### Melt data for ggplot2, save
 ```{r}
 load('../../data/output/smm-banks-fintech-output-descr-znorm-and-ratio.Rdata')
 
@@ -297,6 +297,13 @@ dfm <- melt(data = df, id.vars = c("year", "name", "type", "category", "place", 
 
 dfm
 
+save(dfm, file = '../../data/output/smm-banks-fintech-output-descr-znorm-and-ratio-melted.Rdata')
+```
+
+### Load melted data, filter
+```{r}
+load('../../data/output/smm-banks-fintech-output-descr-znorm-and-ratio-melted.Rdata')
+
 dfmf_normz <- filter(dfm, variable == "normz_employees" | variable == "normz_tw_favorites" | variable == "normz_tw_followers" | variable ==  "normz_tw_friends" | variable == "normz_tw_statuses" | variable ==  "normz_fb_favorites" | variable ==  "normz_fb_followers" )
 
 dfmf_ratio <- filter(dfm, variable == "ratio_tw_favorites" | variable == "ratio_tw_followers" | variable == "ratio_tw_friends" | variable == "ratio_tw_statuses" | variable == "ratio_fb_favorites" | variable == "ratio_fb_followers")
@@ -304,11 +311,14 @@ dfmf_ratio <- filter(dfm, variable == "ratio_tw_favorites" | variable == "ratio_
 dfmf_normz
 dfmf_ratio
 
+save(dfmf_ratio, file = '../../data/output/smm-banks-fintech-output-descr-ratio-melted.Rdata')
+
 ```
 
 ### Descriptive Stats: SMA (Social Media Activity) Ratio Plots
 ```{r}
 
+load('../../data/output/smm-banks-fintech-output-descr-ratio-melted.Rdata')
 options(scipen=999)  # turn-off scientific notation like 1e+48
 
 # Create labels for charts
@@ -356,7 +366,6 @@ ggsave("../../img/charts-ratio/chart3_smar_comp_to_employee_size_total.png")
 
 dfmf_ratio_sorted <-na.omit(dfmf_ratio)
 dfmf_ratio_sorted <-dfmf_ratio_sorted[order(dfmf_ratio_sorted$type, dfmf_ratio_sorted$category, dfmf_ratio_sorted$value),]
-dfmf_ratio_sorted <-reorder(dfmf_ratio_sorted)
 
 # Chart: Boxplot Social Media Activity Ratio (SMAR) Compared to Entity Category
 ggplot(dfmf_ratio_sorted) +
