@@ -140,7 +140,7 @@ glimpse(ft_data_tidy)
 
 ```
 
-### Create sentiment datasets (bing, nrc, nrc polarity)
+### Create sentiment datasets (bing, nrc, nrc polarity, afinn)
 ### Kudos to https://www.datacamp.com/community/tutorials/sentiment-analysis-R
 ```{r}
 ft_data_bing <- ft_data_tidy %>%
@@ -152,6 +152,9 @@ ft_data_nrc <- ft_data_tidy %>%
 ft_data_nrc_sub <- ft_data_tidy %>%
   inner_join(get_sentiments("nrc")) %>%
   filter(!sentiment %in% c("positive", "negative"))
+
+ft_data_afinn <- ft_data_tidy %>%
+  inner_join(get_sentiments("afinn"))
 
 ```
 
@@ -209,9 +212,6 @@ plot_words %>%
 ggsave("../../img/charts-sent-analysis/chart2_s-a-nrc-words-sentiments.png")
 
 # Plotting AFINN histogram
-ft_data_afinn <- ft_data_tidy %>%
-  inner_join(get_sentiments("afinn"))
-
 ggplot(data=ft_data_afinn, aes(x=ft_data_afinn$score)) + 
   geom_histogram(breaks=seq(-10, 10, by=1), 
                  col="black", 
