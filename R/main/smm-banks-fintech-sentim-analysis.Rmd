@@ -87,13 +87,13 @@ d.file
 df_sa_fintech <- filter(d.file, type == "Fintech")
 df_sa_fintech
 
+
 # Subselect account name for Twitter search "tw_parse"
 df_sub_sa_ft <- subset(df_sa_fintech, select=c("tw_parse"))
 df_sub_sa_ft <- na.omit(df_sub_sa_ft)
-df_sub_sa_ft
 
 
-# Create list of dataframes of each account
+# Create list of dataframes of each account - FINTECH
 fintech_list = list()
 
 for (i in 1:nrow(df_sub_sa_ft)) {
@@ -118,8 +118,43 @@ fintech_data_all_tweets
 
 ```
 
+
+```{r}
+
+df_sa_banks <- filter(d.file, type == "Bank")
+df_sa_banks
+
+df_sub_sa_banks <- subset(df_sa_banks, select=c("tw_parse"))
+df_sub_sa_banks <- na.omit(df_sub_sa_banks)
+
+# Create list of dataframes of each account - BANKS
+banks_list = list()
+
+for (i in 1:nrow(df_sub_sa_banks)) {
+  print (i)
+  
+  tweets <- searchTwitter(df_sub_sa_banks$tw_parse[i], n=500, lang="de")
+  
+  if (length(tweets) != 0) {
+    tweetsDF <- twListToDF(tweets) # Convert to DF
+    tweetsDF$tw_parse <- df_sub_sa_banks$tw_parse[i] # Keep track from which account parsed
+    banks_list[[i]] <- tweetsDF # Add it to your list
+  }
+  
+}
+
+# Bind rows - final data
+banks_data_all_tweets <- dplyr::bind_rows(banks_list)
+# Save
+save(banks_data_all_tweets, file = '../../data/output/smm-banks-fintech-output-banks-data-all-tweets.Rdata')
+
+banks_data_all_tweets
+
+
+```
+
 ### Cleaning fintech data
-### Kudos to https://www.datacamp.com/community/tutorials/sentiment-analysis-R
+### see also https://www.datacamp.com/community/tutorials/sentiment-analysis-R
 ```{r}
 # Load data
 load('../../data/output/smm-banks-fintech-output-fintech-data-all-tweets.Rdata')
@@ -141,7 +176,7 @@ glimpse(ft_data_tidy)
 ```
 
 ### Create sentiment datasets (bing, nrc, nrc polarity, afinn)
-### Kudos to https://www.datacamp.com/community/tutorials/sentiment-analysis-R
+### see also https://www.datacamp.com/community/tutorials/sentiment-analysis-R
 ```{r}
 ft_data_bing <- ft_data_tidy %>%
   inner_join(get_sentiments("bing"))
@@ -159,7 +194,7 @@ ft_data_afinn <- ft_data_tidy %>%
 ```
 
 ### Plotting first sentiment analysis results
-### Kudos to https://www.datacamp.com/community/tutorials/sentiment-analysis-R
+### see also https://www.datacamp.com/community/tutorials/sentiment-analysis-R
 ```{r}
 
 # Plotting word count
