@@ -4,4 +4,5 @@
 .Ruserdata
 .Renviron
 .httr-oauth
+.Google-NLP-API-Key.json
 packrat/lib*/

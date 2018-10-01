@@ -19,6 +19,7 @@ library(dplyr)
 library(magrittr)
 library(tidytext)
 library(ggrepel)
+library(googleLanguageR)
 
 
 
@@ -42,6 +43,8 @@ source("../functions/util.R")
 ```{r}
 # Start Authentication to Twitter API
 auth_twitter()
+# Start Authentication to Google NLP API
+gl_auth("../../.Google-NLP-API-Key.json")
 
 ```
 
@@ -76,9 +79,9 @@ str(ubsschweiz_tweets)
 # Get user timelines
 tweets = userTimeline("zkb_ch", n=100)
 length(tweets)
-tweetsDF <- twListToDF(tweets)
-head(tweetsDF)
-tweetsDF
+tweetsDF_test <- twListToDF(tweets)
+head(tweetsDF_test)
+tweetsDF_test
 
 
 ```
@@ -173,25 +176,6 @@ banks_data_all_tweets <- dplyr::bind_rows(banks_list, banks_data_all_tweets)
 save(banks_data_all_tweets, file = '../../data/output/smm-banks-fintech-output-banks-data-all-tweets.Rdata')
 
 banks_data_all_tweets
-
-
-```
-
-## H2 testing. H2: Companies in the Swiss FinTech sector have higher social impact (in comparison of followers to retweets) than Swiss banking companies.
-```{r}
-# Load FinTech data from HDD
-load('../../data/output/smm-banks-fintech-output-fintech-data-all-tweets.Rdata')
-# Load Bank data from HDD
-load('../../data/output/smm-banks-fintech-output-banks-data-all-tweets.Rdata')
-
-fintech_data_all_tweets
-banks_data_all_tweets
-
-# Avg. amount of retweets
-mean(fintech_data_all_tweets$retweetCount)
-mean(banks_data_all_tweets$retweetCount)
-
-
 
 
 ```
@@ -307,3 +291,138 @@ ft_hist_afinn
 
 
 ```
+
+
+
+## H2 testing. H2: Companies in the Swiss FinTech sector have higher social impact (in comparison of followers to retweets) than Swiss banking companies.
+```{r}
+# Load the saved file (the one with Twitter metadata)
+load('../../data/output/smm-banks-fintech-output-descriptives.Rdata')
+
+d.file
+# Cleaning: Only remove row, if tw_parse = NA
+d.file <- d.file[!is.na(d.file$tw_parse), ]
+
+# Add new avg. retweet column
+d.file$avgRT <- rep(NA, length(d.file$tw_parse))
+
+# Calculate for every entity (bank or fintech) the avg. amount of retweets and write it to a new column
+### Attention for the Twitter API rate limit! If hit, wait and run again.
+i = 1
+for (ent in d.file$tw_parse) {
+  print(i)
+  tweets = try(userTimeline(d.file[i, 'tw_parse'], n = 100))
+  if (length(tweets)<10)
+    { d.file$avgRT[i] <- NA }
+  else
+    { tweetsDF <- twListToDF(tweets)
+      d.file$avgRT[i] <- mean(tweetsDF$retweetCount)
+    }
+  i <- i+1
+}
+
+df_avgRT <- d.file
+
+# Testing
+tweets = try(userTimeline("ecollect", n = 100))
+tweetsDF2<-twListToDF(tweets)
+mean(tweetsDF2$retweetCount)
+
+# Cleaning 2: Only remove row, if avgRT = NA
+df_avgRT <- df_avgRT[!is.na(df_avgRT$avgRT), ]
+
+# Save
+save(df_avgRT, file = '../../data/output/smm-banks-fintech-output-descr-avg-retweets.Rdata')
+
+```
+
+
+### H2: Display histograms, build regression models for banking and fintech
+### Methodology adapted from Garcia (2018)
+```{r}
+# Load the saved file (with avgRT - average retweets)
+load('../../data/output/smm-banks-fintech-output-descr-avg-retweets.Rdata')
+
+df_avgRT
+
+# Filter type "Fintech"
+df_avgRT_Fintech <- filter(df_avgRT, type == "Fintech")
+df_avgRT_Fintech
+
+# Filter type "Bank"
+df_avgRT_Bank <- filter(df_avgRT, type == "Bank")
+df_avgRT_Bank
+
+# Show histogram on log scale, with Twitter followers
+hist(log(df_avgRT_Bank$tw_followers))
+hist(log(df_avgRT_Fintech$tw_followers))
+
+# Plots
+plot(log(df_avgRT_Bank$tw_followers), log(df_avgRT_Bank$avgRT), xlab="Log followers", ylab="Log SI")
+plot(log(df_avgRT_Fintech$tw_followers), log(df_avgRT_Fintech$avgRT), xlab="Log followers", ylab="Log SI")
+
+# Clean for zeros because of log
+df_avgRT_Bank <-df_avgRT_Bank[df_avgRT_Bank$avgRT>0 & df_avgRT_Bank$tw_followers>0,]
+df_avgRT_Fintech <-df_avgRT_Fintech[df_avgRT_Fintech$avgRT>0 & df_avgRT_Fintech$tw_followers>0,]
+
+# Banks
+df_avgRT_Bank$SI <- log(df_avgRT_Bank$avgRT)
+df_avgRT_Bank$FC <- log(df_avgRT_Bank$tw_followers)
+si_model_bank <- lm(SI ~ FC, data=df_avgRT_Bank)
+summary(si_model_bank)
+
+
+plot(log(df_avgRT_Bank$tw_followers), log(df_avgRT_Bank$avgRT), xlab="Log followers", ylab="Log SI")+
+abline(si_model_bank$coefficients[1], si_model_bank$coefficients[2], col="red")
+
+# Fintech
+df_avgRT_Fintech$SI <- log(df_avgRT_Fintech$avgRT)
+df_avgRT_Fintech$FC <- log(df_avgRT_Fintech$tw_followers)
+si_model_fintech <- lm(SI ~ FC, data=df_avgRT_Fintech)
+summary(si_model_fintech)
+
+plot(log(df_avgRT_Fintech$tw_followers), log(df_avgRT_Fintech$avgRT), xlab="Log followers", ylab="Log SI")+
+abline(si_model_fintech$coefficients[1], si_model_fintech$coefficients[2], col="red")
+
+
+```
+
+
+## H3 Testing: H3: Writing lengthy tweets contributes positively (in number of retweets and likes) to companies in the Swiss Fintech sector and Swiss banking sector.
+```{r}
+# TODO. Here follows H3 testing. Measurement variables are: a. Message length, b. Message likes, c. Message retweets.
+# 1. Corporate messages (tweets) will be collected, from both sectors Banks and FinTech.
+# 2. Two each message a column will be added: Measurement variable a.: Message length
+# 3. Two regression models will be build, for both sectors Banks and FinTech.
+
+
+```
+
+
+## H4 Testing: H4: Companies in the Swiss FinTech sector have a more positive polarity score measured on client responses of corporate tweets than Swiss banking companies.
+
+```{r}
+# TODO. Here follows H4 testing. Measurement variables are: a. Message text, b. Polarity score
+# 1. Retweets will be collected, from both sectors Banks and FinTech.
+# 2. Polarity score will be calculated based on that tweets, with Google NLP API.
+
+# Load FinTech data from HDD
+load('../../data/output/smm-banks-fintech-output-fintech-data-all-tweets.Rdata')
+# Load Bank data from HDD
+load('../../data/output/smm-banks-fintech-output-banks-data-all-tweets.Rdata')
+
+# Filter for retweets
+fintech_data_all_tweets
+fintech_data_retweets <- filter(fintech_data_all_tweets, isRetweet == "TRUE")
+
+banks_data_all_tweets
+banks_data_retweets <- filter(banks_data_all_tweets, isRetweet == "TRUE")
+
+nlp_result <- gl_nlp(banks_data_retweets$text)
+
+
+
+
+
+```
+
