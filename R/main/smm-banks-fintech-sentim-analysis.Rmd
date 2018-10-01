@@ -65,7 +65,7 @@ trends = getTrends(woeid=woeidZurich)
 trends
 
 # Search tweets about "Swiss Bank in a specific time range"
-head(searchTwitter('Swiss Bank', since='2015-08-01', until= '2018-08-05'))
+head(searchTwitter('Swiss Bank', since='2015-08-01', until= '2018-10-01'))
 
 # Search for ubsschweiz tweets
 ubsschweiz_tweets <- searchTwitter("ubsschweiz", n=500, lang="de")
@@ -74,12 +74,17 @@ str(ubsschweiz_tweets)
 
 ```
 
-
-### Starting sentiment analysis with loading data from fintech sector, using tidytext, lang=en
+## Tweet data loads from both sectors
+### Loading tweet data from FinTech sector, lang=en
+### This chunk can run any number of times and cyclical to append additional data
 ```{r}
 # Load again initial file (before norm and ratio calculations)
 load('../../data/output/smm-banks-fintech-output-descriptives.Rdata')
 options(scipen=999)  # turn-off scientific notation like 1e+48
+
+# Load FinTech data from HDD for an n-th run to append additional data 
+load('../../data/output/smm-banks-fintech-output-fintech-data-all-tweets.Rdata')
+
 
 d.file
 
@@ -109,8 +114,10 @@ for (i in 1:nrow(df_sub_sa_ft)) {
   
 }
 
-# Bind rows - final data
-fintech_data_all_tweets <- dplyr::bind_rows(fintech_list)
+fintech_list
+
+# Bind rows - bind both dataframes into one, 1. read df from hdd, 2. read df by API, bind them in one, save.
+fintech_data_all_tweets <- dplyr::bind_rows(fintech_list, fintech_data_all_tweets)
 # Save
 save(fintech_data_all_tweets, file = '../../data/output/smm-banks-fintech-output-fintech-data-all-tweets.Rdata')
 
@@ -118,9 +125,17 @@ fintech_data_all_tweets
 
 ```
 
-
+### Loading tweet data from banking sector, lang=de
+### This chunk can run any number of times and cyclical to append additional data
 ```{r}
+# Load again initial file (before norm and ratio calculations)
+load('../../data/output/smm-banks-fintech-output-descriptives.Rdata')
+options(scipen=999)  # turn-off scientific notation like 1e+48
 
+# Load Bank data from HDD for an n-th run to append additional data 
+load('../../data/output/smm-banks-fintech-output-banks-data-all-tweets.Rdata')
+
+# Filter type "Bank"
 df_sa_banks <- filter(d.file, type == "Bank")
 df_sa_banks
 
@@ -143,8 +158,8 @@ for (i in 1:nrow(df_sub_sa_banks)) {
   
 }
 
-# Bind rows - final data
-banks_data_all_tweets <- dplyr::bind_rows(banks_list)
+# Bind rows - bind both dataframes into one, 1. read df from hdd, 2. read df by API, bind them in one, save.
+banks_data_all_tweets <- dplyr::bind_rows(banks_list, banks_data_all_tweets)
 # Save
 save(banks_data_all_tweets, file = '../../data/output/smm-banks-fintech-output-banks-data-all-tweets.Rdata')
 
