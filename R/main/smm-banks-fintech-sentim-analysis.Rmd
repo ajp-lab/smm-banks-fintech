@@ -45,7 +45,7 @@ auth_twitter()
 
 ```
 
-### Starting sentiment analysis, first examples
+### Starting sentiment analysis, try some first examples
 ```{r}
 
 load('../../data/output/smm-banks-fintech-output-descr-ratio-melted.Rdata')
@@ -68,9 +68,18 @@ trends
 head(searchTwitter('Swiss Bank', since='2015-08-01', until= '2018-10-01'))
 
 # Search for ubsschweiz tweets
-ubsschweiz_tweets <- searchTwitter("ubsschweiz", n=500, lang="de")
+ubsschweiz_tweets <- searchTwitter("#ubsschweiz", n=500, lang="de")
+
 zkbch_tweets <- searchTwitter("zkb_ch", n=500, lang="de")
 str(ubsschweiz_tweets)
+
+# Get user timelines
+tweets = userTimeline("zkb_ch", n=100)
+length(tweets)
+tweetsDF <- twListToDF(tweets)
+head(tweetsDF)
+tweetsDF
+
 
 ```
 
@@ -168,6 +177,27 @@ banks_data_all_tweets
 
 ```
 
+## H2 testing. H2: Companies in the Swiss FinTech sector have higher social impact (in comparison of followers to retweets) than Swiss banking companies.
+```{r}
+# Load FinTech data from HDD
+load('../../data/output/smm-banks-fintech-output-fintech-data-all-tweets.Rdata')
+# Load Bank data from HDD
+load('../../data/output/smm-banks-fintech-output-banks-data-all-tweets.Rdata')
+
+fintech_data_all_tweets
+banks_data_all_tweets
+
+# Avg. amount of retweets
+mean(fintech_data_all_tweets$retweetCount)
+mean(banks_data_all_tweets$retweetCount)
+
+
+
+
+```
+
+
+## Prototyping sentiment analysis
 ### Cleaning fintech data
 ### see also https://www.datacamp.com/community/tutorials/sentiment-analysis-R
 ```{r}
