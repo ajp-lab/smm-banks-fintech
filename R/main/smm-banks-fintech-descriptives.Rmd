@@ -346,11 +346,10 @@ shapiro.test(dfmf_ratio_sorted$value)
 # p-value < 0.0, significantly different from normal distribution -> use non parametric two-samples Wilcoxon rank test.
 
 res <- wilcox.test(value ~ type, data = dfmf_ratio_sorted,
-                   exact = FALSE, alternative = "greater")
+                   exact = FALSE, alternative = "less")
 
 res
-
-
+# p-value < 0.0
 
 
 
@@ -364,7 +363,7 @@ res
 SocMedActLabs <- c("TW Favorites", "TW Followers", "TW Friends", "TW Statuses", "FB Favorites", "FB Followers")
 
 # Chart: Social Media Activity Type (SMAT) Compared to Social Media Activity Ratio (SMAR)
-ggplot(dfmf_ratio, aes(x=(variable), y=log10(value)) ) + 
+ggplot(dfmf_ratio_sorted, aes(x=(variable), y=log10(value)) ) + 
   geom_point(aes(col=as.factor(type), size=employees)) + 
   labs(y="SMAR (log10 scale)", 
        x="SMAT", 
@@ -379,7 +378,7 @@ ggsave("../../img/charts-ratio/chart1_smat_comp_to_smar.png")
 
 ```{r}
 # Chart: Boxplot Social Media Activity Ratio (SMAR) Compared to Entity Type Total
-ggplot(dfmf_ratio) +
+ggplot(dfmf_ratio_sorted) +
   geom_boxplot(aes(type, log10(value), col=as.factor(type))) +
   labs(x = "Type", y = "SMAR (log10 scale)",
        title="Social Media Activity Ratio (SMAR) Compared to Entity Type")+
@@ -390,7 +389,7 @@ ggsave("../../img/charts-ratio/chart2_smar_comp_to_entity_type_total.png")
 
 ```{r}
 # Chart: Employee size vs. Social Media Activity Total
-ggplot(dfmf_ratio, aes(x=log10(employees), y=log10(value)) ) +
+ggplot(dfmf_ratio_sorted, aes(x=log10(employees), y=log10(value)) ) +
   geom_point(aes(col=as.factor(type) )) +
   labs(x = "Employee Size (log10 scale)", y = "SMAR (log10 scale)",
        title="Social Media Activity Ratio (SMAR) Compared to Employee Size") +
