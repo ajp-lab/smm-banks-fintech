@@ -44,7 +44,7 @@ source("../functions/util.R")
 # Start Authentication to Twitter API
 auth_twitter()
 # Start Authentication to Google NLP API
-gl_auth("../../.Google-NLP-API-Key.json")
+auth_google()
 
 ```
 

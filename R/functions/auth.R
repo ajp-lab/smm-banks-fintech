@@ -11,7 +11,7 @@
 ### A parameter in ".Renviron" looks like this:
 ### tw_consumer_key = "secretxyz"
 
-### Get access to TWITTER
+### Get access to TWITTER API
 auth_twitter <- function() {
   
   require(twitteR)
@@ -21,7 +21,7 @@ auth_twitter <- function() {
                       Sys.getenv("tw_access_secret"))
 }
 
-### Get access to LINKEDIN
+### Get access to LINKEDIN API
 auth_linkedin <- function() {
   
   require(Rlinkedin)
@@ -31,4 +31,9 @@ auth_linkedin <- function() {
   
   return(in.auth)
   
-  }
+}
+
+### Get access to GOOGLE NLP API
+auth_google <- function() {
+  gl_auth(Sys.getenv("GL_AUTH"))
+}
