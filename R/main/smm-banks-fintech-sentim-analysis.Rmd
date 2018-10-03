@@ -71,13 +71,15 @@ trends
 head(searchTwitter('Swiss Bank', since='2015-08-01', until= '2018-10-01'))
 
 # Search for ubsschweiz tweets
-ubsschweiz_tweets <- searchTwitter("#ubsschweiz", n=500, lang="de")
+ubsschweiz_tweets <- searchTwitter("#ubsschweiz", n=50)
 
-zkbch_tweets <- searchTwitter("zkb_ch", n=500, lang="de")
-str(ubsschweiz_tweets)
+zkbch_tweets <- searchTwitter("zkb_ch", n=50, lang="de")
+str(zkbch_tweets)
+
+zkbch_tweets
 
 # Get user timelines
-tweets = userTimeline("zkb_ch", n=100)
+tweets = userTimeline("zkb_ch", n=50)
 length(tweets)
 tweetsDF_test <- twListToDF(tweets)
 head(tweetsDF_test)
@@ -183,7 +185,7 @@ banks_data_all_tweets
 
 ## Prototyping sentiment analysis
 ### Cleaning fintech data
-### see also https://www.datacamp.com/community/tutorials/sentiment-analysis-R
+### References:  https://www.datacamp.com/community/tutorials/sentiment-analysis-R
 ```{r}
 # Load data
 load('../../data/output/smm-banks-fintech-output-fintech-data-all-tweets.Rdata')
@@ -205,7 +207,7 @@ glimpse(ft_data_tidy)
 ```
 
 ### Create sentiment datasets (bing, nrc, nrc polarity, afinn)
-### see also https://www.datacamp.com/community/tutorials/sentiment-analysis-R
+### References: https://www.datacamp.com/community/tutorials/sentiment-analysis-R
 ```{r}
 ft_data_bing <- ft_data_tidy %>%
   inner_join(get_sentiments("bing"))
@@ -223,7 +225,7 @@ ft_data_afinn <- ft_data_tidy %>%
 ```
 
 ### Plotting first sentiment analysis results
-### see also https://www.datacamp.com/community/tutorials/sentiment-analysis-R
+### References: https://www.datacamp.com/community/tutorials/sentiment-analysis-R
 ```{r}
 
 # Plotting word count
@@ -293,8 +295,8 @@ ft_hist_afinn
 ```
 
 
-
 ## H2 testing. H2: Companies in the Swiss FinTech sector have higher social impact (in comparison of followers to retweets) than Swiss banking companies.
+### References: Adapted from Garcia (2018), Social Data Science Lecture
 ```{r}
 # Load the saved file (the one with Twitter metadata)
 load('../../data/output/smm-banks-fintech-output-descriptives.Rdata')
@@ -338,7 +340,6 @@ save(df_avgRT, file = '../../data/output/smm-banks-fintech-output-descr-avg-retw
 
 
 ### H2: Display histograms, build regression models for banking and fintech
-### Methodology adapted from Garcia (2018)
 ```{r}
 # Load the saved file (with avgRT - average retweets)
 load('../../data/output/smm-banks-fintech-output-descr-avg-retweets.Rdata')
@@ -399,8 +400,10 @@ abline(si_model_fintech$coefficients[1], si_model_fintech$coefficients[2], col="
 ```
 
 
-## H4 Testing: H4: Companies in the Swiss FinTech sector have a more positive polarity score measured on client responses of corporate tweets than Swiss banking companies.
-
+## H4 Testing: H4: Companies in the Swiss FinTech sector have a more positive polarity score measured on client responses to corporate tweets than Swiss banking companies.
+### References: 
+### https://cran.r-project.org/web/packages/googleLanguageR/vignettes/nlp.html (Google NLP API),
+### Data pre-cleaning: eBook, Mastering Social Media Mining in R (Ravindran, 2015), Cleaning the corpus
 ```{r}
 # TODO. Here follows H4 testing. Measurement variables are: a. Message text, b. Polarity score
 # 1. Retweets will be collected, from both sectors Banks and FinTech.
@@ -418,10 +421,21 @@ fintech_data_retweets <- filter(fintech_data_all_tweets, isRetweet == "TRUE")
 banks_data_all_tweets
 banks_data_retweets <- filter(banks_data_all_tweets, isRetweet == "TRUE")
 
-nlp_result <- gl_nlp(banks_data_retweets$text)
+# Pre-cleaning unstructured data
+ft_retweets_clean <- cleanTweets(fintech_data_retweets$text)
+head (ft_retweets_clean)
 
+# Structuring the unstructured
+#ft_retweets_final <- ft_retweets_clean %>%
+#  unique(ft_retweets_clean) %>% # Remove repetitive tweets
+#  filter(n() == 10) # Minimum size of tweets for NLP analysis
 
+# Remove repetitive tweets
+ft_retweets_final=unique(ft_retweets_final)
+head(ft_retweets_final)
 
+# Google NLP API call
+# nlp_result <- gl_nlp(ft_retweets_final)
 
 
 ```

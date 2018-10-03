@@ -46,8 +46,9 @@ source("../functions/util.R")
 # Start Authentication to Twitter API
 auth_twitter()
 
-#Start Authentication to LinkedIn API
-in.auth <- auth_linkedin()
+# Inactive
+# Start Authentication to LinkedIn API
+# in.auth <- auth_linkedin()
 
 ```
 
@@ -316,7 +317,7 @@ save(dfmf_ratio, file = '../../data/output/smm-banks-fintech-output-descr-ratio-
 ```
 
 ## H1 testing. H1: Companies in the Swiss FinTech sector are more active on social media than Swiss banking companies in relation to employee number.
-### T-test in R with http://www.sthda.com/english/wiki/unpaired-two-samples-t-test-in-r#what-is-unpaired-two-samples-t-test
+### Reference: T-test in R with http://www.sthda.com/english/wiki/unpaired-two-samples-t-test-in-r#what-is-unpaired-two-samples-t-test
 ```{r}
 
 load('../../data/output/smm-banks-fintech-output-descr-ratio-melted.Rdata')
