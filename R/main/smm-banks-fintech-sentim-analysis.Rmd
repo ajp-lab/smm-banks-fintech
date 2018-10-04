@@ -20,6 +20,7 @@ library(magrittr)
 library(tidytext)
 library(ggrepel)
 library(googleLanguageR)
+library(stringr)
 
 
 
@@ -402,40 +403,59 @@ abline(si_model_fintech$coefficients[1], si_model_fintech$coefficients[2], col="
 
 ## H4 Testing: H4: Companies in the Swiss FinTech sector have a more positive polarity score measured on client responses to corporate tweets than Swiss banking companies.
 ### References: 
-### https://cran.r-project.org/web/packages/googleLanguageR/vignettes/nlp.html (Google NLP API),
+### CRAN package, R libs to access Google NLP AP: https://cran.r-project.org/web/packages/googleLanguageR/vignettes/nlp.html
 ### Data pre-cleaning: eBook, Mastering Social Media Mining in R (Ravindran, 2015), Cleaning the corpus
+### Cloud Natural Language by Google: https://cloud.google.com/natural-language/
+### https://taylorwhitten.github.io/blog/Google_NLP_SentimentAnalysis
 ```{r}
-# TODO. Here follows H4 testing. Measurement variables are: a. Message text, b. Polarity score
-# 1. Retweets will be collected, from both sectors Banks and FinTech.
-# 2. Polarity score will be calculated based on that tweets, with Google NLP API.
+# Here follows H4 testing. 
+# Measurement variables are: a. Polarity / Sentiment score of msg / tweet in (positive, neutral, negative: -1.0 to 1.0)
 
 # Load FinTech data from HDD
 load('../../data/output/smm-banks-fintech-output-fintech-data-all-tweets.Rdata')
 # Load Bank data from HDD
 load('../../data/output/smm-banks-fintech-output-banks-data-all-tweets.Rdata')
 
+# 1. Retweets will be collected, from both sectors Banks and FinTech.
 # Filter for retweets
+# FINTECH
 fintech_data_all_tweets
 fintech_data_retweets <- filter(fintech_data_all_tweets, isRetweet == "TRUE")
 
+#BANKS
 banks_data_all_tweets
 banks_data_retweets <- filter(banks_data_all_tweets, isRetweet == "TRUE")
 
-# Pre-cleaning unstructured data
+# 2. Pre-cleaning and removing repetitive data, only tweets >= 5 chars
+# FINTECH
 ft_retweets_clean <- cleanTweets(fintech_data_retweets$text)
+ft_retweets_clean = unique(ft_retweets_clean)
+ft_retweets_clean <- subset(ft_retweets_clean, nchar(ft_retweets_clean)>= 5)
 head (ft_retweets_clean)
 
-# Structuring the unstructured
-#ft_retweets_final <- ft_retweets_clean %>%
-#  unique(ft_retweets_clean) %>% # Remove repetitive tweets
-#  filter(n() == 10) # Minimum size of tweets for NLP analysis
+# BANKS
+ba_retweets_clean <- cleanTweets(banks_data_retweets$text)
+ba_retweets_clean = unique(ba_retweets_clean)
+ba_retweets_clean <- subset(ba_retweets_clean, nchar(ba_retweets_clean)>= 5)
+head (ba_retweets_clean)
 
-# Remove repetitive tweets
-ft_retweets_final=unique(ft_retweets_final)
-head(ft_retweets_final)
+# 3. Polarity score will be calculated based on that tweets, by the help of Google NLP, an ML cloud-based approach.
+# Google NLP API call, only of method: "language.documents.analyzeSentiment:	Analyzes the sentiment of the provided text."
+# FINTECH
+ft_nlp_result <- gl_nlp(ft_retweets_clean, nlp_type = "analyzeSentiment")
+ft_nlp_result
 
-# Google NLP API call
-# nlp_result <- gl_nlp(ft_retweets_final)
+# BANKS
+ba_nlp_result <- gl_nlp(ba_retweets_clean, nlp_type = "analyzeSentiment")
+ba_nlp_result
+
+# 4. Visualization of results / histograms
+# FINTECH
+ggplot(ft_nlp_result$documentSentiment, aes(x=score, y=magnitude) ) +
+  geom_point() +
+  labs(x = "Score", y = "Magnitude",
+       title="Polarity Analysis FinTech")
+
 
 
 ```
