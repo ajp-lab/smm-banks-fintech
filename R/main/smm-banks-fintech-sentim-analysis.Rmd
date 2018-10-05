@@ -1,5 +1,5 @@
 ---
-title: "MAS-Thesis-SMM-and-Trend-Monitoring-Sentiment-Analysis"
+title: "MAS-Thesis-SMA-Sentiment-Analysis"
 author: "ajpucher"
 date: "2018 M08 5"
 output: html_document
@@ -606,3 +606,62 @@ nlp_res_wilcox
 
 ```
 
+## Testing H5
+### References:  https://www.datacamp.com/community/tutorials/sentiment-analysis-R
+```{r}
+# Load FinTech data from HDD
+load('../../data/output/smm-banks-fintech-output-fintech-data-all-tweets.Rdata')
+# Load Bank data from HDD
+load('../../data/output/smm-banks-fintech-output-banks-data-all-tweets.Rdata')
+
+glimpse(fintech_data_all_tweets)
+
+#Created in the first tutorial
+undesirable_words <- c(" ai ", " ca ", " la ", "hey", " na ", " da ", " uh ", " tin ", "  ll",  "la", "da", "uh", "ah")
+
+#Create tidy text format: Unnested, Unsummarized, -Undesirables, Stop and Short words
+ft_data_tidy <- fintech_data_all_tweets %>%
+  unnest_tokens(word, text) %>% #Break the text into individual words
+  filter(!word %in% undesirable_words) %>% #Remove undesirables
+  filter(!nchar(word) < 3) %>% #Words like "ah" or "oo"
+  anti_join(stop_words) #Data provided by the tidytext package
+
+glimpse(ft_data_tidy)
+
+# Create sentiment dataset nrc
+ft_data_nrc <- ft_data_tidy %>%
+  inner_join(get_sentiments("nrc"))
+
+# Plotting word count
+nrc_plot <- ft_data_nrc %>%
+  group_by(sentiment) %>%
+  summarise(word_count = n()) %>%
+  ungroup() %>%
+  mutate(sentiment = reorder(sentiment, word_count)) %>%
+  #Use `fill = -word_count` to make the larger bars darker
+  ggplot(aes(sentiment, word_count, fill = -word_count)) +
+  geom_col() +
+  guides(fill = FALSE) + #Turn off the legend
+  labs(x = NULL, y = "Word Count") +
+  scale_y_continuous(limits = c(0, 3000)) + #Hard code the axis limit
+  ggtitle("Entity Type Fintech: Word Count - NRC Sentiment") +
+  coord_flip()
+nrc_plot
+
+ft_data_nrc
+
+# Plotting word emotion stats
+ft_data_nrc %>%
+  #filter(variable %in% "text") %>%
+  group_by(sentiment) %>%
+  summarise(word_count = n()) %>%
+  ungroup() %>%
+  mutate(sentiment = reorder(sentiment, word_count)) %>%
+  ggplot(aes(sentiment, word_count, fill = -word_count)) +
+  geom_col() +
+  guides(fill = FALSE) +
+  labs(x = NULL, y = "Word Count") +
+  ggtitle("FinTech NRC Sentiment") +
+  coord_flip()
+
+```
