@@ -21,6 +21,7 @@ library(tidytext)
 library(ggrepel)
 library(googleLanguageR)
 library(stringr)
+library(psych)
 
 
 
@@ -452,11 +453,108 @@ ba_nlp_result
 # 4. Visualization of results / histograms
 # FINTECH
 ggplot(ft_nlp_result$documentSentiment, aes(x=score, y=magnitude) ) +
-  geom_point() +
+  geom_point(alpha = 1/5) +
+  geom_count()+
+  geom_smooth(method = "loess", span=0.75) +
   labs(x = "Score", y = "Magnitude",
        title="Polarity Analysis FinTech")
 
+ggplot(ft_nlp_result$documentSentiment, aes( x=score) ) +
+  geom_density(alpha = 0.25)+
+  xlab("Polarity")+
+  ylab("Magnitude")+
+  ggtitle(paste0("Polarity Analysis FinTech"))
+  
 
+ft_nlp_result$documentSentiment
+
+hist(ft_nlp_result$documentSentiment$magnitude, 
+     main="Magnitude FinTech", 
+     xlab="Magnitude", 
+     las=1, 
+     breaks=5)
+
+hist(ft_nlp_result$documentSentiment$score, 
+     main="Score FinTech", 
+     xlab="Score", 
+     las=1, 
+     breaks=5)
+
+# Create dataframe w. results, FinTech
+df_ft_nlp_res <- ft_nlp_result$documentSentiment
+df_ft_nlp_res$type <- rep("FinTech", length(df_ft_nlp_res$score))
+
+df_ft_nlp_res
+
+# BANKS
+ggplot(ba_nlp_result$documentSentiment, aes(x=score, y=magnitude) ) +
+  geom_point(alpha = 1/5) +
+  geom_count()+
+  geom_smooth(method = "loess", span=0.75) +
+  labs(x = "Score", y = "Magnitude",
+       title="Polarity Analysis Banks")
+
+ggplot(ba_nlp_result$documentSentiment, aes( x=score) ) +
+  geom_density(alpha = 0.25)+
+  xlab("Polarity")+
+  ylab("Magnitude")+
+  ggtitle(paste0("Polarity Analysis Banks"))
+  
+
+ba_nlp_result$documentSentiment
+
+hist(ba_nlp_result$documentSentiment$magnitude, 
+     main="Magnitude Banks", 
+     xlab="Magnitude", 
+     las=1, 
+     breaks=5)
+
+hist(ba_nlp_result$documentSentiment$score,
+     main="Score Banks", 
+     xlab="Score", 
+     las=1, 
+     breaks=5)
+
+# Create dataframe w. results, Banks
+df_ba_nlp_res <- ba_nlp_result$documentSentiment
+df_ba_nlp_res$type <- rep("Banks", length(df_ba_nlp_res$score))
+
+df_ba_nlp_res
+
+# Creating FINAL H4 plot
+df_nlp_plot_ba_ft <- rbind(df_ft_nlp_res, df_ba_nlp_res)
+df_nlp_plot_ba_ft
+
+ggplot(df_nlp_plot_ba_ft, aes(x=score, fill = factor(type)) ) +
+  geom_density(alpha = 0.25)+
+  labs(x = "Score", y = "Magnitude",
+       title="Polarity Analysis Banks and FinTech")+
+  scale_fill_discrete(name="Entity Type")
+  
+
+# Using psych package for standard descriptive stats: https://www.statmethods.net/stats/descriptives.html
+# Creating FINAL H4 descriptives
+describe(ft_nlp_result$documentSentiment$score)
+describe(ba_nlp_result$documentSentiment$score)
+
+# Summary statistics
+group_by(df_nlp_plot_ba_ft, type) %>%
+  summarise(
+    count = n(),
+    mean = mean(score, na.rm = TRUE),
+    median = median(score, na.rm = TRUE),
+    sd = sd(score, na.rm = TRUE)
+  )
+
+# Shapiro test for normal distribution
+with(df_nlp_plot_ba_ft, shapiro.test(score[type == "Banks"]))
+with(df_nlp_plot_ba_ft, shapiro.test(score[type == "FinTech"]))
+
+# Not normal distributed, so wilcoxon test
+nlp_res_wilcox <- wilcox.test(score ~ type, data = df_nlp_plot_ba_ft,
+                   exact = FALSE, alternative = "less")
+
+nlp_res_wilcox
 
 ```
 

@@ -341,6 +341,9 @@ group_by(dfmf_ratio_sorted, type) %>%
     sd = sd(value, na.rm = TRUE)
   )
 
+# Shapiro test for normal distribution, both types
+with(dfmf_ratio_sorted, shapiro.test(value[type == "Bank"]))
+with(dfmf_ratio_sorted, shapiro.test(value[type == "Fintech"]))
 
 # Normaility tests
 shapiro.test(dfmf_ratio_sorted$value)
