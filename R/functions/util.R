@@ -18,9 +18,8 @@ normalize <- function(x) {
 cleanTweets<- function(tweet){
   # remove html links, which are not required for sentiment analysis
   tweet = gsub("(f|ht)(tp)(s?)(://)(.*)[.|/](.*)", " ", tweet)
-  # Note: atm we want retweets...
   # First we will remove retweet entities from the stored tweets (text)
-  # tweet = gsub("(RT|via)((?:\\b\\W*@\\w+)+)", " ", tweet) 
+  tweet = gsub("(RT|via)((?:\\b\\W*@\\w+)+)", " ", tweet) 
   # Then remove all "#Hashtag"
   tweet = gsub("#\\w+", " ", tweet) 
   # Then remove all "@people"

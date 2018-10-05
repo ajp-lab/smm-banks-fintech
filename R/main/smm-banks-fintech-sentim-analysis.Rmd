@@ -22,6 +22,7 @@ library(ggrepel)
 library(googleLanguageR)
 library(stringr)
 library(psych)
+library(scatterplot3d)
 
 
 
@@ -392,11 +393,57 @@ abline(si_model_fintech$coefficients[1], si_model_fintech$coefficients[2], col="
 
 
 ## H3 Testing: H3: Writing lengthy tweets contributes positively (in number of retweets and likes) to companies in the Swiss Fintech sector and Swiss banking sector.
+### References:
+### https://www.statmethods.net/stats/regression.html, https://www.statmethods.net/graphs/scatterplot.html
 ```{r}
 # TODO. Here follows H3 testing. Measurement variables are: a. Message length, b. Message likes, c. Message retweets.
 # 1. Corporate messages (tweets) will be collected, from both sectors Banks and FinTech.
 # 2. Two each message a column will be added: Measurement variable a.: Message length
 # 3. Two regression models will be build, for both sectors Banks and FinTech.
+
+# Load FinTech data from HDD
+load('../../data/output/smm-banks-fintech-output-fintech-data-all-tweets.Rdata')
+# Load Bank data from HDD
+load('../../data/output/smm-banks-fintech-output-banks-data-all-tweets.Rdata')
+
+# 1. Retweets will be collected, from both sectors Banks and FinTech.
+# Filter for retweets
+# FINTECH
+fintech_data_all_tweets
+fintech_data_retweets <- filter(fintech_data_all_tweets, isRetweet == "TRUE")
+fintech_data_only_tweets <- filter(fintech_data_all_tweets, isRetweet == "FALSE")
+
+# BANKS
+banks_data_all_tweets
+banks_data_retweets <- filter(banks_data_all_tweets, isRetweet == "TRUE")
+banks_data_only_tweets <- filter(banks_data_all_tweets, isRetweet == "FALSE")
+
+# Add column msg / text length
+fintech_data_only_tweets$text_length <- nchar(fintech_data_only_tweets$text)
+banks_data_only_tweets$text_length <- nchar(banks_data_only_tweets$text)
+
+# Build MLR model
+# FINTECH
+txtl_model_ft <- lm(text_length ~ favoriteCount + retweetCount, data=fintech_data_only_tweets)
+summary(txtl_model_ft)
+plot(txtl_model_ft)
+txtl_model_ft
+
+# 3D plot
+attach(fintech_data_only_tweets) 
+s3d_ft <-scatterplot3d(text_length, favoriteCount, retweetCount, pch=16, highlight.3d=TRUE,
+  type="h", main="3D Scatterplot FinTech")
+
+# BANKS
+txtl_model_ba <- lm(text_length ~ favoriteCount + retweetCount, data=banks_data_only_tweets)
+summary(txtl_model_ba)
+plot(txtl_model_ba)
+
+# 3D plot
+attach(banks_data_only_tweets) 
+s3d_ba <-scatterplot3d(text_length, favoriteCount, retweetCount, pch=16, highlight.3d=TRUE,
+  type="h", main="3D Scatterplot Banks")
+
 
 
 ```
@@ -521,10 +568,11 @@ df_ba_nlp_res$type <- rep("Banks", length(df_ba_nlp_res$score))
 
 df_ba_nlp_res
 
-# Creating FINAL H4 plot
+# Create dataframe w. results, FinTech
 df_nlp_plot_ba_ft <- rbind(df_ft_nlp_res, df_ba_nlp_res)
 df_nlp_plot_ba_ft
 
+# Creating FINAL H4 plot
 ggplot(df_nlp_plot_ba_ft, aes(x=score, fill = factor(type)) ) +
   geom_density(alpha = 0.25)+
   labs(x = "Score", y = "Magnitude",
