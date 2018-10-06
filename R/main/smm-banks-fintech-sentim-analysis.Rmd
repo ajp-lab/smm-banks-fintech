@@ -12,19 +12,20 @@ knitr::opts_chunk$set(echo = TRUE)
 ### Inventory of all libs / load all libs here
 
 ```{r}
-library(dplyr)
-library(ggplot2)
-library(ggrepel)
-library(googleLanguageR)
-library(magrittr)
-library(parallel)
-library(psych)
-library(reshape2)
-library(scatterplot3d)
-library(stringr)
-library(syuzhet)
-library(tidytext)
-library(twitteR)
+library(circlize) # Visuals, circle diagrams, citation needed: Gu, Z. circlize implements and enhances circular visualization in R. Bioinformatics 2014.
+library(dplyr) # Data ops
+library(ggplot2) # Visuals
+library(ggrepel) # Visuals
+library(googleLanguageR) # Google NLP lib
+library(magrittr) # Forward pipe operator
+library(parallel) # Parallelization / multi-core computation usage
+library(psych) # Stats
+library(reshape2) # Reshape data
+library(scatterplot3d) # 3d plots, MLR
+library(stringr) # String ops
+library(syuzhet) # Stanford NLP lib, citation needed
+library(tidytext) # Text mining
+library(twitteR) # Twitter API lib
 
 
 ```
@@ -693,6 +694,74 @@ barplot(
   las = 1, 
   main = "Emotions in FinTech", xlab="Percentage"
 )
+
+# 4.A. EXTRA Plotting
+# Plotting NRC sentiments with words, which triggered those sentiments
+plot_words <- ft_data_nrc %>%
+  group_by(sentiment) %>%
+  count(word, sort = TRUE) %>%
+  arrange(desc(n)) %>%
+  slice(seq_len(8)) %>% #consider top_n() from dplyr also
+  ungroup()
+
+plot_words %>%
+  #Set `y = 1` to just plot one variable and use word as the label
+  ggplot(aes(word, 1, label = word, fill = sentiment )) +
+  #You want the words, not the points
+  geom_point(color = "transparent") +
+  #Make sure the labels don't overlap
+  geom_label_repel(force = 1,nudge_y = .5,  
+                   direction = "y",
+                   box.padding = 0.04,
+                   segment.color = "transparent",
+                   size = 3) +
+  facet_grid(~sentiment) +
+  theme(axis.text.y = element_blank(), axis.text.x = element_blank(),
+        axis.title.x = element_text(size = 6),
+        panel.grid = element_blank(), panel.background = element_blank(),
+        panel.border = element_rect("lightgray", fill = NA),
+        strip.text.x = element_text(size = 9)) +
+  xlab(NULL) + ylab(NULL) +
+  ggtitle("Entity Type Fintech: Trigger Words - NRC Sentiment") +
+  coord_flip()
+
+# MOOD RING plotting
+# Calc. NRC for all tweets
+# 1. Prep data to tidy text format, undertake sentiment analysis based on individual words, use tidytext libs
+undesirable_words <- c(" ai ", " ca ", " la ", "hey", " na ", " da ", " uh ", " tin ", "  ll",  "la", "da", "uh", "ah")
+#Create tidy text format: Unnested, Unsummarized, -Undesirables, Stop and Short words
+ft_data_tidy_all <- fintech_data_all_tweets %>%
+  unnest_tokens(word, text) %>% #Break the text into individual words
+  filter(!word %in% undesirable_words) %>% #Remove undesirables
+  filter(!nchar(word) < 3) %>% #Words like "ah" or "oo"
+  anti_join(stop_words) #Data provided by the tidytext package
+
+# 2.A. TIDYTEXT: Undertake sentiment analysis with built-in tidytext nrc methodology
+# Create sentiment dataset nrc
+ft_data_nrc_all <- ft_data_tidy_all %>%
+  inner_join(get_sentiments("nrc"))
+
+# Plot the mood ring! :-)
+#Define some colors to use throughout
+my_colors <- c("#E69F00", "#56B4E9", "#009E73", "#CC79A7", "#D55E00", "#D65E00", "#6C5B7B", "#355C7D")
+grid.col = c("TRUE" = "grey", "FALSE" = "grey", "anger" = my_colors[1], "anticipation" = my_colors[2], "disgust" = my_colors[3], "fear" = my_colors[4], "joy" = my_colors[5], "sadness" = my_colors[6], "surprise" = my_colors[7], "trust" = my_colors[8])
+
+tweet_mood <-  ft_data_nrc_all %>%
+  filter(!sentiment %in% c("positive", "negative")) %>%
+  count(sentiment, isRetweet) %>%
+  group_by(sentiment, isRetweet) %>%
+  summarise(sentiment_sum = sum(n)) %>%
+  ungroup()
+
+circos.clear()
+#Set the gap size
+circos.par(gap.after = c(rep(5, length(unique(tweet_mood[[1]])) - 1), 15,
+                         rep(5, length(unique(tweet_mood[[2]])) - 1), 15))
+chordDiagram(tweet_mood, grid.col = grid.col, transparency = .2)
+title("FinTech Sector: Relationship Between Mood and Tweets")
+
+# 4.B. EXTRA Plotting
+
 
 
 ```
