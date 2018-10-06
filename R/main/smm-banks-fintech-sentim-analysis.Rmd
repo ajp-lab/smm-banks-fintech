@@ -12,18 +12,19 @@ knitr::opts_chunk$set(echo = TRUE)
 ### Inventory of all libs / load all libs here
 
 ```{r}
-library(ggplot2)
-library(twitteR)
-library(reshape2)
 library(dplyr)
-library(magrittr)
-library(tidytext)
+library(ggplot2)
 library(ggrepel)
 library(googleLanguageR)
-library(stringr)
+library(magrittr)
+library(parallel)
 library(psych)
+library(reshape2)
 library(scatterplot3d)
-
+library(stringr)
+library(syuzhet)
+library(tidytext)
+library(twitteR)
 
 
 ```
@@ -606,21 +607,22 @@ nlp_res_wilcox
 
 ```
 
-## Testing H5
+## Testing H5. H5: Companies in the Swiss FinTech experience more joy based on responses to corporate tweets than Swiss banking companies.
 ### References:  https://www.datacamp.com/community/tutorials/sentiment-analysis-R
+### FinTech - sentiment analysis mostly in EN
 ```{r}
+# FINTECH
 # Load FinTech data from HDD
 load('../../data/output/smm-banks-fintech-output-fintech-data-all-tweets.Rdata')
-# Load Bank data from HDD
-load('../../data/output/smm-banks-fintech-output-banks-data-all-tweets.Rdata')
 
-glimpse(fintech_data_all_tweets)
+# Capture only retweets
+fintech_data_retweets <- filter(fintech_data_all_tweets, isRetweet == "TRUE")
+glimpse(fintech_data_retweets)
 
-#Created in the first tutorial
+# 1. Prep data to tidy text format, undertake sentiment analysis based on individual words, use tidytext libs
 undesirable_words <- c(" ai ", " ca ", " la ", "hey", " na ", " da ", " uh ", " tin ", "  ll",  "la", "da", "uh", "ah")
-
 #Create tidy text format: Unnested, Unsummarized, -Undesirables, Stop and Short words
-ft_data_tidy <- fintech_data_all_tweets %>%
+ft_data_tidy <- fintech_data_retweets %>%
   unnest_tokens(word, text) %>% #Break the text into individual words
   filter(!word %in% undesirable_words) %>% #Remove undesirables
   filter(!nchar(word) < 3) %>% #Words like "ah" or "oo"
@@ -628,29 +630,14 @@ ft_data_tidy <- fintech_data_all_tweets %>%
 
 glimpse(ft_data_tidy)
 
+# 2.A. TIDYTEXT: Undertake sentiment analysis with built-in tidytext nrc methodology
 # Create sentiment dataset nrc
 ft_data_nrc <- ft_data_tidy %>%
   inner_join(get_sentiments("nrc"))
 
-# Plotting word count
-nrc_plot <- ft_data_nrc %>%
-  group_by(sentiment) %>%
-  summarise(word_count = n()) %>%
-  ungroup() %>%
-  mutate(sentiment = reorder(sentiment, word_count)) %>%
-  #Use `fill = -word_count` to make the larger bars darker
-  ggplot(aes(sentiment, word_count, fill = -word_count)) +
-  geom_col() +
-  guides(fill = FALSE) + #Turn off the legend
-  labs(x = NULL, y = "Word Count") +
-  scale_y_continuous(limits = c(0, 3000)) + #Hard code the axis limit
-  ggtitle("Entity Type Fintech: Word Count - NRC Sentiment") +
-  coord_flip()
-nrc_plot
-
 ft_data_nrc
 
-# Plotting word emotion stats
+# 3.A. Plotting word emotion stats
 ft_data_nrc %>%
   #filter(variable %in% "text") %>%
   group_by(sentiment) %>%
@@ -663,5 +650,118 @@ ft_data_nrc %>%
   labs(x = NULL, y = "Word Count") +
   ggtitle("FinTech NRC Sentiment") +
   coord_flip()
+
+ft_data_tidy$word
+
+# --- OTHER METHODOLOGY: SYUZHET ---
+# 2.B. SYUZHET: Call syuzhet multilanguage sentiment analysis method, on tidy text format (WORDS)
+ft_data_tidy_syu <- get_nrc_sentiment(ft_data_tidy$word, language = "english")
+# With PARALLELIZATION, cluster creating for 2 cores
+cl <- makeCluster(2)
+clusterExport(cl = cl, c("get_nrc_sentiment"))
+ft_data_tidy_syu <- get_nrc_sentiment(ft_data_tidy$word, language = "english", cl=cl)
+stopCluster(cl)
+
+# Prep data to clean tweets (whole sentences), undertake sentiment analysis based on tweets
+ft_retweets_clean <- cleanTweets(fintech_data_retweets$text)
+#ft_retweets_clean = unique(ft_retweets_clean) # del redundant tweets?
+head (ft_retweets_clean)
+
+# Call SYUZHET multilanguage sentiment analysis method, on cleaned tweets (SENTENCES)
+ft_data_nrc_syu <- get_nrc_sentiment(ft_retweets_clean, language = "english")
+# With PARALLELIZATION, cluster creating for 2 cores
+cl <- makeCluster(2)
+clusterExport(cl = cl, c("get_nrc_sentiment"))
+ft_data_nrc_syu <- get_nrc_sentiment(ft_retweets_clean, language = "english", cl=cl)
+stopCluster(cl)
+
+# 3.B. Plotting
+# Plots, WORDS (tidytext format)
+barplot(
+  sort(colSums(prop.table(ft_data_tidy_syu[, 1:8]))), 
+  horiz = TRUE, 
+  cex.names = 0.7, 
+  las = 1, 
+  main = "Emotions in FinTech", xlab="Percentage"
+)
+
+# Plots, SENTENCES (whole tweets, sentences)
+barplot(
+  sort(colSums(prop.table(ft_data_nrc_syu[, 1:8]))), 
+  horiz = TRUE, 
+  cex.names = 0.7, 
+  las = 1, 
+  main = "Emotions in FinTech", xlab="Percentage"
+)
+
+
+```
+
+
+### Banking - sentiment analysis mostly in DE
+### References:
+### tidytext: https://www.datacamp.com/community/tutorials/sentiment-analysis-R
+### syuzhet package (Stanford NLP): https://cran.r-project.org/web/packages/syuzhet/vignettes/syuzhet-vignette.html
+### German stopwords: https://www.inwt-statistics.de/blog-artikel-lesen/text-mining-part-2-making-of.html
+```{r}
+# BANK
+# Load Bank data from HDD
+load('../../data/output/smm-banks-fintech-output-banks-data-all-tweets.Rdata')
+
+# Capture only retweets
+banks_data_retweets <- filter(banks_data_all_tweets, isRetweet == "TRUE")
+
+# 1. Prep data to tidy text format, undertake sentiment analysis based on individual words, use tidytext libs
+undesirable_words <- c(" der ", " die ", " das ", "hey", "la", "da", "uh", "ah")
+# Create tidy text format: Unnested, Unsummarized, -Undesirables, Stop and Short words
+ba_data_tidy <- banks_data_retweets %>%
+  unnest_tokens(word, text) %>% #Break the text into individual words
+  filter(!word %in% undesirable_words) %>% #Remove undesirables
+  filter(!nchar(word) < 3) %>% #Words like "ah" or "oo"
+  anti_join(get_stopwords(language="de")) #Data provided by the tidytext package, Language = DE
+
+glimpse(ba_data_tidy)
+
+# Call syuzhet multilanguage sentiment analysis method, on tidy text format (WORDS)
+ba_data_nrc_tidy <- get_nrc_sentiment(ba_data_tidy$word, language = "german")
+# With PARALLELIZATION, cluster creating for 2 cores
+cl <- makeCluster(2)
+clusterExport(cl = cl, c("get_nrc_sentiment"))
+ba_data_nrc_tidy <- get_nrc_sentiment(ba_data_tidy$word, language = "german", cl=cl)
+stopCluster(cl)
+
+# 2. Prep data to clean tweets (whole sentences), undertake sentiment analysis based on tweets
+ba_retweets_clean <- cleanTweets(banks_data_retweets$text)
+#ba_retweets_clean = unique(ba_retweets_clean) # del redundant tweets?
+head (ba_retweets_clean)
+
+# Call SYUZHET multilanguage sentiment analysis method, on cleaned tweets (SENTENCES)
+ba_data_nrc <- get_nrc_sentiment(ba_retweets_clean, language = "german")
+# With PARALLELIZATION, cluster creating for 2 cores
+cl <- makeCluster(2)
+clusterExport(cl = cl, c("get_nrc_sentiment"))
+ba_data_nrc <- get_nrc_sentiment(ba_retweets_clean, language = "german", cl=cl)
+stopCluster(cl)
+
+# 3. Plotting
+# Plots, WORDS (tidytext format)
+barplot(
+  sort(colSums(prop.table(ba_data_nrc_tidy[, 1:8]))), 
+  horiz = TRUE, 
+  cex.names = 0.7, 
+  las = 1, 
+  main = "Emotions in Banking", xlab="Percentage"
+)
+
+# Plots, SENTENCES (whole tweets, sentences)
+barplot(
+  sort(colSums(prop.table(ba_data_nrc[, 1:8]))), 
+  horiz = TRUE, 
+  cex.names = 0.7, 
+  las = 1, 
+  main = "Emotions in Banking", xlab="Percentage"
+)
+
+
 
 ```
