@@ -656,6 +656,7 @@ ft_data_tidy$word
 
 # --- OTHER METHODOLOGY: SYUZHET ---
 # 2.B. SYUZHET: Call syuzhet multilanguage sentiment analysis method, on tidy text format (WORDS)
+# WORDS does not work atm - invalid input
 ft_data_tidy_syu <- get_nrc_sentiment(ft_data_tidy$word, language = "english")
 # With PARALLELIZATION, cluster creating for 2 cores
 cl <- makeCluster(2)
@@ -736,7 +737,7 @@ ft_data_tidy_all <- fintech_data_all_tweets %>%
   filter(!nchar(word) < 3) %>% #Words like "ah" or "oo"
   anti_join(stop_words) #Data provided by the tidytext package
 
-# 2.A. TIDYTEXT: Undertake sentiment analysis with built-in tidytext nrc methodology
+# 2.TIDYTEXT: Undertake sentiment analysis with built-in tidytext nrc methodology
 # Create sentiment dataset nrc
 ft_data_nrc_all <- ft_data_tidy_all %>%
   inner_join(get_sentiments("nrc"))
@@ -761,7 +762,53 @@ chordDiagram(tweet_mood, grid.col = grid.col, transparency = .2)
 title("FinTech Sector: Relationship Between Mood and Tweets")
 
 # 4.B. EXTRA Plotting
+# Prep data to clean tweets (whole sentences), undertake sentiment analysis based on tweets
+ft_alltweets_clean <- cleanTweets(fintech_data_all_tweets$text)
+#ft_retweets_clean = unique(ft_retweets_clean) # del redundant tweets?
+head (ft_alltweets_clean)
 
+# Call SYUZHET multilanguage sentiment analysis method, on cleaned tweets (SENTENCES)
+ft_data_nrc_syu_all <- get_nrc_sentiment(ft_alltweets_clean, language = "english")
+# With PARALLELIZATION, cluster creating for 2 cores
+cl <- makeCluster(2)
+clusterExport(cl = cl, c("get_nrc_sentiment"))
+ft_data_nrc_syu_all <- get_nrc_sentiment(ft_alltweets_clean, language = "english", cl=cl)
+stopCluster(cl)
+
+# Merging to a big dataset, FinTech syuzhet
+ft_big_syu <- cbind(ft_data_nrc_syu_all, ft_alltweets_clean)
+ft_big_syu <- cbind(ft_big_syu, fintech_data_all_tweets)
+
+# Only select needed data for FinTech mood ring
+ft_fin_syu <- dplyr::select(ft_big_syu, isRetweet, anger, anticipation, disgust, fear, joy, sadness, surprise, trust)
+ft_fin_syu
+
+# Data prep for mood ring - data melt
+ft_melt_syu <- melt(data = ft_fin_syu, id.vars = c("isRetweet"),
+                    measure.vars =c("anger", "anticipation", "disgust", "fear", "joy", "sadness", "surprise", "trust"))
+
+# Data aggregation
+ft_mood <-  ft_melt_syu %>%
+  filter(!value == 0) %>% # important! it should not count zeros
+  count(isRetweet, variable) %>%
+  group_by(isRetweet, variable) %>%
+  summarise(variable_sum = sum(n)) %>%
+  arrange((variable)) %>%
+  ungroup()
+
+ft_mood <- ft_mood[c("variable", "isRetweet", "variable_sum")]
+
+# Plot the FINTECH mood ring!
+#Define some colors to use throughout
+my_colors <- c("#E69F00", "#56B4E9", "#009E73", "#CC79A7", "#D55E00", "#D65E00", "#6C5B7B", "#355C7D")
+grid.col = c("TRUE" = "grey", "FALSE" = "grey", "anger" = my_colors[1], "anticipation" = my_colors[2], "disgust" = my_colors[3], "fear" = my_colors[4], "joy" = my_colors[5], "sadness" = my_colors[6], "surprise" = my_colors[7], "trust" = my_colors[8])
+
+circos.clear()
+#Set the gap size
+circos.par(gap.after = c(rep(5, length(unique(ft_mood[[1]])) - 1), 15,
+                         rep(5, length(unique(ft_mood[[2]])) - 1), 15))
+chordDiagram(ft_mood, grid.col = grid.col, transparency = .2)
+title("FinTech Sector: Relationship Between Mood and Tweets")
 
 
 ```
@@ -830,6 +877,56 @@ barplot(
   las = 1, 
   main = "Emotions in Banking", xlab="Percentage"
 )
+
+
+# 4.B. EXTRA Plotting
+# Prep data to clean tweets (whole sentences), undertake sentiment analysis based on tweets
+ba_alltweets_clean <- cleanTweets(banks_data_all_tweets$text)
+#ft_retweets_clean = unique(ft_retweets_clean) # del redundant tweets?
+head (ba_alltweets_clean)
+
+# Call SYUZHET multilanguage sentiment analysis method, on cleaned tweets (SENTENCES)
+ba_data_nrc_syu_all <- get_nrc_sentiment(ba_alltweets_clean, language = "german")
+# With PARALLELIZATION, cluster creating for 2 cores
+cl <- makeCluster(2)
+clusterExport(cl = cl, c("get_nrc_sentiment"))
+ba_data_nrc_syu_all <- get_nrc_sentiment(ba_alltweets_clean, language = "german", cl=cl)
+stopCluster(cl)
+
+# Merging to a big dataset, Banks syuzhet
+ba_big_syu <- cbind(ba_data_nrc_syu_all, ba_alltweets_clean)
+ba_big_syu <- cbind(ba_big_syu, banks_data_all_tweets)
+
+# Only select needed data for Banks mood ring
+ba_fin_syu <- dplyr::select(ba_big_syu, isRetweet, anger, anticipation, disgust, fear, joy, sadness, surprise, trust)
+ba_fin_syu
+
+# Data prep for mood ring - data melt
+ba_melt_syu <- melt(data = ba_fin_syu, id.vars = c("isRetweet"),
+                    measure.vars =c("anger", "anticipation", "disgust", "fear", "joy", "sadness", "surprise", "trust"))
+
+# Data aggregation
+ba_mood <-  ba_melt_syu %>%
+  filter(!value == 0) %>% # important! it should not count zeros
+  count(isRetweet, variable) %>%
+  group_by(isRetweet, variable) %>%
+  summarise(variable_sum = sum(n)) %>%
+  arrange((variable)) %>%
+  ungroup()
+
+ba_mood <- ba_mood[c("variable", "isRetweet", "variable_sum")]
+
+# Plot the BANKS mood ring!
+#Define some colors to use throughout
+my_colors <- c("#E69F00", "#56B4E9", "#009E73", "#CC79A7", "#D55E00", "#D65E00", "#6C5B7B", "#355C7D")
+grid.col = c("TRUE" = "grey", "FALSE" = "grey", "anger" = my_colors[1], "anticipation" = my_colors[2], "disgust" = my_colors[3], "fear" = my_colors[4], "joy" = my_colors[5], "sadness" = my_colors[6], "surprise" = my_colors[7], "trust" = my_colors[8])
+
+circos.clear()
+#Set the gap size
+circos.par(gap.after = c(rep(5, length(unique(ba_mood[[1]])) - 1), 15,
+                         rep(5, length(unique(ba_mood[[2]])) - 1), 15))
+chordDiagram(ba_mood, grid.col = grid.col, transparency = .2)
+title("Banks Sector: Relationship Between Mood and Tweets")
 
 
 

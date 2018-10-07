@@ -31,6 +31,8 @@ cleanTweets<- function(tweet){
   # finally, we remove unnecessary spaces (white spaces, tabs etc)
   tweet = gsub("[ \t]{2,}", " ", tweet)
   tweet = gsub("^\\s+|\\s+$", "", tweet)
+  # remove all non-graphical chars, see https://stackoverflow.com/questions/9637278/r-tm-package-invalid-input-in-utf8towcs
+  tweet = gsub("[^[:graph:]]", " ", tweet) 
   # Anything else to remove, e.g. "slang words" using the above methods.
   # ...
   
