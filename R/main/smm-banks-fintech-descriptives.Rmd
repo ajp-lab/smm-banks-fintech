@@ -12,10 +12,11 @@ knitr::opts_chunk$set(echo = TRUE)
 ### Inventory of all libs / load all libs here
 
 ```{r}
-library(ggplot2)
-library(twitteR)
-library(reshape2)
 library(dplyr)
+library(ggplot2)
+library(psych) # Stats
+library(reshape2)
+library(twitteR)
 
 # Inactive
 # library(Rlinkedin)
@@ -341,22 +342,28 @@ group_by(dfmf_ratio_sorted, type) %>%
     sd = sd(value, na.rm = TRUE)
   )
 
+# Describe by psych
+describe(dfmf_ratio_sorted)
+
+# correlation coefficient
+cor(dfmf_ratio_sorted$value, dfmf_ratio_sorted$employees, method = c("spearman"))
+
+# summary
+summary(dfmf_ratio_sorted)
+
 # Shapiro test for normal distribution, both types
 with(dfmf_ratio_sorted, shapiro.test(value[type == "Bank"]))
 with(dfmf_ratio_sorted, shapiro.test(value[type == "Fintech"]))
 
 # Normaility tests
 shapiro.test(dfmf_ratio_sorted$value)
-# p-value < 0.0, significantly different from normal distribution -> use non parametric two-samples Wilcoxon rank test.
+# p-value < 0.0, significantly different from normal distribution -> use non parametric two-samples Wilcoxon rank sum test.
 
 res <- wilcox.test(value ~ type, data = dfmf_ratio_sorted,
                    exact = FALSE, alternative = "less")
 
 res
 # p-value < 0.0
-
-
-
 
 ```
 
@@ -370,8 +377,8 @@ SocMedActLabs <- c("TW Favorites", "TW Followers", "TW Friends", "TW Statuses", 
 ggplot(dfmf_ratio_sorted, aes(x=(variable), y=log10(value)) ) + 
   geom_point(aes(col=as.factor(type), size=employees)) + 
   labs(y="SMAR (log10 scale)", 
-       x="SMAT", 
-       title="Social Media Activity Type (SMAT) Compared to Social Media Activity Ratio (SMAR)")+
+       x="Social Media Activity Type (SMAT)", 
+       title="SMAT Compared to Social Media Activity Ratio (SMAR)")+
   scale_color_discrete(name="Entity Type") +
   scale_size_continuous(name="Employee Size")+
   scale_x_discrete(labels=SocMedActLabs)+
@@ -410,7 +417,7 @@ ggsave("../../img/charts-ratio/chart3_smar_comp_to_employee_size_total.png")
 ggplot(dfmf_ratio_sorted) +
   geom_boxplot(aes(x=reorder(category,(value), FUN=median), y=log10(value), col=as.factor(type) ) ) +
   labs(x = "Entity Category", y = "SMAR (log10 scale)",
-    title="Social Media Activity Ratio (SMAR) Compared to Entity Category")+
+    title="SMAR Compared to Entity Category")+
   scale_color_discrete(name="Entity Type")+
   coord_flip()
 
