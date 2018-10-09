@@ -406,7 +406,7 @@ abline(si_model_fintech$coefficients[1], si_model_fintech$coefficients[2], col="
 ### References:
 ### https://www.statmethods.net/stats/regression.html, https://www.statmethods.net/graphs/scatterplot.html
 ```{r}
-# TODO. Here follows H3 testing. Measurement variables are: a. Message length, b. Message likes, c. Message retweets.
+# Here follows H3 testing. Measurement variables are: a. Message length, b. Message likes, c. Message retweets.
 # 1. Corporate messages (tweets) will be collected, from both sectors Banks and FinTech.
 # 2. Two each message a column will be added: Measurement variable a.: Message length
 # 3. Two regression models will be build, for both sectors Banks and FinTech.
