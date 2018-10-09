@@ -138,7 +138,8 @@ fintech_list
 # Bind rows - bind both dataframes into one, 1. read df from hdd, 2. read df by API, bind them in one, save.
 fintech_data_all_tweets <- dplyr::bind_rows(fintech_list, fintech_data_all_tweets)
 # Save
-save(fintech_data_all_tweets, file = '../../data/output/smm-banks-fintech-output-fintech-data-all-tweets.Rdata')
+#save(fintech_data_all_tweets, file = '../../data/output/smm-banks-fintech-output-fintech-data-all-tweets.Rdata')
+save(fintech_data_all_tweets, file = '../../data/output/smm-banks-fintech-output-fintech-data-all-tweets2.Rdata')
 
 fintech_data_all_tweets
 
@@ -180,7 +181,8 @@ for (i in 1:nrow(df_sub_sa_banks)) {
 # Bind rows - bind both dataframes into one, 1. read df from hdd, 2. read df by API, bind them in one, save.
 banks_data_all_tweets <- dplyr::bind_rows(banks_list, banks_data_all_tweets)
 # Save
-save(banks_data_all_tweets, file = '../../data/output/smm-banks-fintech-output-banks-data-all-tweets.Rdata')
+#save(banks_data_all_tweets, file = '../../data/output/smm-banks-fintech-output-banks-data-all-tweets2.Rdata')
+save(banks_data_all_tweets, file = '../../data/output/smm-banks-fintech-output-banks-data-all-tweets2.Rdata')
 
 banks_data_all_tweets
 
@@ -339,12 +341,14 @@ mean(tweetsDF2$retweetCount)
 df_avgRT <- df_avgRT[!is.na(df_avgRT$avgRT), ]
 
 # Save
-save(df_avgRT, file = '../../data/output/smm-banks-fintech-output-descr-avg-retweets.Rdata')
+#save(df_avgRT, file = '../../data/output/smm-banks-fintech-output-descr-avg-retweets.Rdata')
+save(df_avgRT, file = '../../data/output/smm-banks-fintech-output-descr-avg-retweets2.Rdata')
 
 ```
 
 
 ### H2: Display histograms, build regression models for banking and fintech
+### Interpreting beta coefficients, linear regression etc. http://r-statistics.co/Linear-Regression.html
 ```{r}
 # Load the saved file (with avgRT - average retweets)
 load('../../data/output/smm-banks-fintech-output-descr-avg-retweets.Rdata')
@@ -363,11 +367,15 @@ df_avgRT_Bank
 hist(log(df_avgRT_Bank$tw_followers))
 hist(log(df_avgRT_Fintech$tw_followers))
 
+# Descriptive stats
+describe(df_avgRT_Bank$tw_followers)
+describe(df_avgRT_Fintech$tw_followers)
+
 # Plots
 plot(log(df_avgRT_Bank$tw_followers), log(df_avgRT_Bank$avgRT), xlab="Log followers", ylab="Log SI")
 plot(log(df_avgRT_Fintech$tw_followers), log(df_avgRT_Fintech$avgRT), xlab="Log followers", ylab="Log SI")
 
-# Clean for zeros because of log
+# Clean for zeros because of logarithm
 df_avgRT_Bank <-df_avgRT_Bank[df_avgRT_Bank$avgRT>0 & df_avgRT_Bank$tw_followers>0,]
 df_avgRT_Fintech <-df_avgRT_Fintech[df_avgRT_Fintech$avgRT>0 & df_avgRT_Fintech$tw_followers>0,]
 
@@ -378,7 +386,7 @@ si_model_bank <- lm(SI ~ FC, data=df_avgRT_Bank)
 summary(si_model_bank)
 
 
-plot(log(df_avgRT_Bank$tw_followers), log(df_avgRT_Bank$avgRT), xlab="Log followers", ylab="Log SI")+
+plot(log(df_avgRT_Bank$tw_followers), log(df_avgRT_Bank$avgRT), xlab="Log followers", ylab="Log SI", main = "Banks")+
 abline(si_model_bank$coefficients[1], si_model_bank$coefficients[2], col="red")
 
 # Fintech
@@ -387,7 +395,7 @@ df_avgRT_Fintech$FC <- log(df_avgRT_Fintech$tw_followers)
 si_model_fintech <- lm(SI ~ FC, data=df_avgRT_Fintech)
 summary(si_model_fintech)
 
-plot(log(df_avgRT_Fintech$tw_followers), log(df_avgRT_Fintech$avgRT), xlab="Log followers", ylab="Log SI")+
+plot(log(df_avgRT_Fintech$tw_followers), log(df_avgRT_Fintech$avgRT), xlab="Log followers", ylab="Log SI", main = "FinTech")+
 abline(si_model_fintech$coefficients[1], si_model_fintech$coefficients[2], col="red")
 
 
