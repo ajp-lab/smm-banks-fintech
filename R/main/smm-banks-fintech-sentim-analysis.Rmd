@@ -444,12 +444,6 @@ describe(banks_data_only_tweets$text_length)
 
 # TODO: Validation for multivariate tests, e.g. mshapiro.test?
 
-# Do the MANOVA test, FINTECH
-ft_res_man <- manova(cbind(favoriteCount, retweetCount) ~ text_length, data = fintech_data_only_tweets)
-summary(ft_res_man)
-# Investigate which variables are significant
-summary.aov(ft_res_man)
-
 # QQ-plots for showing correlation
 qqplot(fintech_data_only_tweets$text_length, fintech_data_only_tweets$favoriteCount)
 qqplot(fintech_data_only_tweets$text_length, fintech_data_only_tweets$retweetCount)
@@ -459,6 +453,12 @@ qqplot(banks_data_only_tweets$text_length, banks_data_only_tweets$retweetCount)
 # Histograms about text_length
 hist(fintech_data_only_tweets$text_length)
 hist(banks_data_only_tweets$text_length)
+
+# Do the MANOVA test, FINTECH
+ft_res_man <- manova(cbind(favoriteCount, retweetCount) ~ text_length, data = fintech_data_only_tweets)
+summary(ft_res_man)
+# Investigate which variables are significant
+summary.aov(ft_res_man)
 
 # Do the MANOVA test, BANKS
 ba_res_man <- manova(cbind(favoriteCount, retweetCount) ~ text_length, data = banks_data_only_tweets)
