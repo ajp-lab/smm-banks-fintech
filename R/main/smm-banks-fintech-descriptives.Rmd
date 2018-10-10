@@ -315,7 +315,7 @@ save(dfmf_ratio, file = '../../data/output/smm-banks-fintech-output-descr-ratio-
 
 ```
 
-## H1 testing. H1: Companies in the Swiss FinTech sector are more active on social media than Swiss banking companies in relation to employee number.
+## H1 testing. H1: Companies in the Swiss FinTech sector have a higher social media activity than Swiss banking companies in relation to employee number.
 ### Reference: T-test in R with http://www.sthda.com/english/wiki/unpaired-two-samples-t-test-in-r#what-is-unpaired-two-samples-t-test
 ```{r}
 
