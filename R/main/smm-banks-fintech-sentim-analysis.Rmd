@@ -408,7 +408,7 @@ abline(si_model_fintech$coefficients[1], si_model_fintech$coefficients[2], col="
 ```
 
 
-## H3 Testing: H3: Writing lengthy tweets has an impact to the number of retweets and likes to companies in the Swiss Fintech sector and Swiss banking sector.
+## H3 Testing: H3: Tweet length has an impact to the number of retweets and likes to companies in the Swiss banking and Swiss FinTech sector.
 ### References:
 ### https://www.statmethods.net/graphs/scatterplot.html
 ### http://www.sthda.com/english/wiki/manova-test-in-r-multivariate-analysis-of-variance
@@ -431,12 +431,10 @@ load('../../data/output/smm-banks-fintech-output-banks-data-all-tweets2.Rdata')
 # Filter for retweets
 # FINTECH
 fintech_data_all_tweets
-fintech_data_retweets <- filter(fintech_data_all_tweets, isRetweet == "TRUE")
 fintech_data_only_tweets <- filter(fintech_data_all_tweets, isRetweet == "FALSE")
 
 # BANKS
 banks_data_all_tweets
-banks_data_retweets <- filter(banks_data_all_tweets, isRetweet == "TRUE")
 banks_data_only_tweets <- filter(banks_data_all_tweets, isRetweet == "FALSE")
 
 # Add column msg / text length
@@ -492,7 +490,6 @@ summary.aov(ba_res_man)
 
 # Plotting
 # 3D plot FINTECH
-
 attach(fintech_data_only_tweets) 
 s3d_ft <-scatterplot3d(text_length, favoriteCount, retweetCount, pch=16, highlight.3d=TRUE,
   type="h", main="3D Scatterplot FinTech", , xlab ="Tweet length", ylab = "Favorites", zlab = "Retweets", col.axis = "gray", col.grid = "gray")
@@ -507,7 +504,7 @@ s3d_ba <-scatterplot3d(text_length, favoriteCount, retweetCount, pch=16, highlig
 ```
 
 
-## H4 Testing: H4: Companies in the Swiss FinTech sector have a more positive polarity score measured on client responses to corporate tweets than Swiss banking companies.
+## H4 Testing: H4: Companies in the Swiss FinTech sector have a higher polarity score based on responses to corporate tweets than Swiss banking companies.
 ### References: 
 ### CRAN package, R libs to access Google NLP AP: https://cran.r-project.org/web/packages/googleLanguageR/vignettes/nlp.html
 ### Data pre-cleaning: eBook, Mastering Social Media Mining in R (Ravindran, 2015), Cleaning the corpus
@@ -518,9 +515,11 @@ s3d_ba <-scatterplot3d(text_length, favoriteCount, retweetCount, pch=16, highlig
 # Measurement variables are: a. Polarity / Sentiment score of msg / tweet in (positive, neutral, negative: -1.0 to 1.0)
 
 # Load FinTech data from HDD
-load('../../data/output/smm-banks-fintech-output-fintech-data-all-tweets.Rdata')
+#load('../../data/output/smm-banks-fintech-output-fintech-data-all-tweets.Rdata')
+load('../../data/output/smm-banks-fintech-output-fintech-data-all-tweets2.Rdata')
 # Load Bank data from HDD
-load('../../data/output/smm-banks-fintech-output-banks-data-all-tweets.Rdata')
+#load('../../data/output/smm-banks-fintech-output-banks-data-all-tweets.Rdata')
+load('../../data/output/smm-banks-fintech-output-banks-data-all-tweets2.Rdata')
 
 # 1. Retweets will be collected, from both sectors Banks and FinTech.
 # Filter for retweets
@@ -550,10 +549,14 @@ head (ba_retweets_clean)
 # FINTECH
 ft_nlp_result <- gl_nlp(ft_retweets_clean, nlp_type = "analyzeSentiment")
 ft_nlp_result
+# SAVE FINTECH Google NLP results
+save(ft_nlp_result, file = '../../data/output/smm-banks-fintech-output-fintech-google-nlp-scores.Rdata')
 
 # BANKS
 ba_nlp_result <- gl_nlp(ba_retweets_clean, nlp_type = "analyzeSentiment")
 ba_nlp_result
+# SAVE BANKS Google NLP results
+save(ba_nlp_result, file = '../../data/output/smm-banks-fintech-output-banks-google-nlp-scores.Rdata')
 
 # 4. Visualization of results / histograms
 # FINTECH
@@ -588,7 +591,8 @@ hist(ft_nlp_result$documentSentiment$score,
 # Create dataframe w. results, FinTech
 df_ft_nlp_res <- ft_nlp_result$documentSentiment
 df_ft_nlp_res$type <- rep("FinTech", length(df_ft_nlp_res$score))
-
+# Additionally, add the retweets
+df_ft_nlp_res$retweet <- ft_retweets_clean
 df_ft_nlp_res
 
 # BANKS
@@ -623,6 +627,8 @@ hist(ba_nlp_result$documentSentiment$score,
 # Create dataframe w. results, Banks
 df_ba_nlp_res <- ba_nlp_result$documentSentiment
 df_ba_nlp_res$type <- rep("Banks", length(df_ba_nlp_res$score))
+# Additionally, add the retweets
+df_ba_nlp_res$retweet <- ba_retweets_clean
 
 df_ba_nlp_res
 
@@ -631,11 +637,18 @@ df_nlp_plot_ba_ft <- rbind(df_ft_nlp_res, df_ba_nlp_res)
 df_nlp_plot_ba_ft
 
 # Creating FINAL H4 plot
-ggplot(df_nlp_plot_ba_ft, aes(x=score, fill = factor(type)) ) +
+ggplot(df_nlp_plot_ba_ft, aes(x=score, y=magnitude, fill = factor(type)) ) +
   geom_density(alpha = 0.25)+
   labs(x = "Score", y = "Magnitude",
        title="Polarity Analysis Banks and FinTech")+
   scale_fill_discrete(name="Entity Type")
+
+# Chart: Boxplot Sentiment Score Compared to Entity Type Total
+ggplot(df_nlp_plot_ba_ft) +
+  geom_boxplot(aes(type, (score), col=as.factor(type))) +
+  labs(x = "Type", y = "Sentiment score",
+       title="Sentiment Score Compared to Entity Type")+
+  scale_color_discrete(name="Entity Type")
   
 
 # Using psych package for standard descriptive stats: https://www.statmethods.net/stats/descriptives.html
@@ -664,7 +677,7 @@ nlp_res_wilcox
 
 ```
 
-## Testing H5. H5: Companies in the Swiss FinTech experience more joy based on responses to corporate tweets than Swiss banking companies.
+## Testing H5. H5: Companies in the Swiss FinTech sector experience higher trust based on responses to corporate tweets than Swiss banking companies.
 ### References:  https://www.datacamp.com/community/tutorials/sentiment-analysis-R
 ### FinTech - sentiment analysis mostly in EN
 ```{r}
