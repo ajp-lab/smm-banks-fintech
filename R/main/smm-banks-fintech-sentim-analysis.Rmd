@@ -671,7 +671,7 @@ with(df_nlp_plot_ba_ft, shapiro.test(score[type == "FinTech"]))
 
 # Not normal distributed, so wilcoxon test
 nlp_res_wilcox <- wilcox.test(score ~ type, data = df_nlp_plot_ba_ft,
-                   exact = FALSE, alternative = "less")
+                   exact = FALSE)
 
 nlp_res_wilcox
 
@@ -683,13 +683,17 @@ nlp_res_wilcox
 ```{r}
 # FINTECH
 # Load FinTech data from HDD
-load('../../data/output/smm-banks-fintech-output-fintech-data-all-tweets.Rdata')
+#load('../../data/output/smm-banks-fintech-output-fintech-data-all-tweets.Rdata')
+load('../../data/output/smm-banks-fintech-output-fintech-data-all-tweets2.Rdata')
 
-# Capture only retweets
+# Load ALL TWEETS, Capture retweets
 fintech_data_retweets <- filter(fintech_data_all_tweets, isRetweet == "TRUE")
 glimpse(fintech_data_retweets)
+```
 
-# 1. Prep data to tidy text format, undertake sentiment analysis based on individual words, use tidytext libs
+### FinTech - Initially try the tidytext method
+```{r}
+# 1.A. Prep data to tidy text format, undertake sentiment analysis based on individual words, use tidytext libs
 undesirable_words <- c(" ai ", " ca ", " la ", "hey", " na ", " da ", " uh ", " tin ", "  ll",  "la", "da", "uh", "ah")
 #Create tidy text format: Unnested, Unsummarized, -Undesirables, Stop and Short words
 ft_data_tidy <- fintech_data_retweets %>%
@@ -722,48 +726,6 @@ ft_data_nrc %>%
   coord_flip()
 
 ft_data_tidy$word
-
-# --- OTHER METHODOLOGY: SYUZHET ---
-# 2.B. SYUZHET: Call syuzhet multilanguage sentiment analysis method, on tidy text format (WORDS)
-# WORDS does not work atm - invalid input
-ft_data_tidy_syu <- get_nrc_sentiment(ft_data_tidy$word, language = "english")
-# With PARALLELIZATION, cluster creating for 2 cores
-cl <- makeCluster(2)
-clusterExport(cl = cl, c("get_nrc_sentiment"))
-ft_data_tidy_syu <- get_nrc_sentiment(ft_data_tidy$word, language = "english", cl=cl)
-stopCluster(cl)
-
-# Prep data to clean tweets (whole sentences), undertake sentiment analysis based on tweets
-ft_retweets_clean <- cleanTweets(fintech_data_retweets$text)
-#ft_retweets_clean = unique(ft_retweets_clean) # del redundant tweets?
-head (ft_retweets_clean)
-
-# Call SYUZHET multilanguage sentiment analysis method, on cleaned tweets (SENTENCES)
-ft_data_nrc_syu <- get_nrc_sentiment(ft_retweets_clean, language = "english")
-# With PARALLELIZATION, cluster creating for 2 cores
-cl <- makeCluster(2)
-clusterExport(cl = cl, c("get_nrc_sentiment"))
-ft_data_nrc_syu <- get_nrc_sentiment(ft_retweets_clean, language = "english", cl=cl)
-stopCluster(cl)
-
-# 3.B. Plotting
-# Plots, WORDS (tidytext format)
-barplot(
-  sort(colSums(prop.table(ft_data_tidy_syu[, 1:8]))), 
-  horiz = TRUE, 
-  cex.names = 0.7, 
-  las = 1, 
-  main = "Emotions in FinTech", xlab="Percentage"
-)
-
-# Plots, SENTENCES (whole tweets, sentences)
-barplot(
-  sort(colSums(prop.table(ft_data_nrc_syu[, 1:8]))), 
-  horiz = TRUE, 
-  cex.names = 0.7, 
-  las = 1, 
-  main = "Emotions in FinTech", xlab="Percentage"
-)
 
 # 4.A. EXTRA Plotting
 # Plotting NRC sentiments with words, which triggered those sentiments
@@ -829,15 +791,42 @@ circos.par(gap.after = c(rep(5, length(unique(tweet_mood[[1]])) - 1), 15,
                          rep(5, length(unique(tweet_mood[[2]])) - 1), 15))
 chordDiagram(tweet_mood, grid.col = grid.col, transparency = .2)
 title("FinTech Sector: Relationship Between Mood and Tweets")
+```
 
-# 4.B. EXTRA Plotting
+### FinTech - SYUZHET method (The SELECTED one)
+```{r}
+# --- OTHER METHODOLOGY: SYUZHET ---
+# 1.B. SYUZHET: Prep data to clean tweets (whole sentences), undertake sentiment analysis based on tweets
+ft_retweets_clean <- cleanTweets(fintech_data_retweets$text)
+ft_retweets_clean = unique(ft_retweets_clean) # del redundant tweets?
+head (ft_retweets_clean)
+
+# Call SYUZHET multilanguage sentiment analysis method, on cleaned tweets (SENTENCES)
+#ft_data_nrc_syu <- get_nrc_sentiment(ft_retweets_clean, language = "english")
+# With PARALLELIZATION, cluster creating for 2 cores
+cl <- makeCluster(2)
+clusterExport(cl = cl, c("get_nrc_sentiment"))
+ft_data_nrc_syu <- get_nrc_sentiment(ft_retweets_clean, language = "english", cl=cl)
+stopCluster(cl)
+
+# 2.B. Plotting
+# Plots, SENTENCES (whole tweets, sentences)
+barplot(
+  sort(colSums(prop.table(ft_data_nrc_syu[, 1:8]))), 
+  horiz = TRUE, 
+  cex.names = 0.7, 
+  las = 1, 
+  main = "Emotions in FinTech", xlab="Percentage"
+)
+
+# 3.B. EXTRA Plotting
 # Prep data to clean tweets (whole sentences), undertake sentiment analysis based on tweets
 ft_alltweets_clean <- cleanTweets(fintech_data_all_tweets$text)
-#ft_retweets_clean = unique(ft_retweets_clean) # del redundant tweets?
+ft_alltweets_clean = unique(ft_alltweets_clean) # del redundant tweets?
 head (ft_alltweets_clean)
 
 # Call SYUZHET multilanguage sentiment analysis method, on cleaned tweets (SENTENCES)
-ft_data_nrc_syu_all <- get_nrc_sentiment(ft_alltweets_clean, language = "english")
+#ft_data_nrc_syu_all <- get_nrc_sentiment(ft_alltweets_clean, language = "english")
 # With PARALLELIZATION, cluster creating for 2 cores
 cl <- makeCluster(2)
 clusterExport(cl = cl, c("get_nrc_sentiment"))
@@ -868,6 +857,7 @@ ft_mood <-  ft_melt_syu %>%
 ft_mood <- ft_mood[c("variable", "isRetweet", "variable_sum")]
 
 # Plot the FINTECH mood ring!
+# TODO: Description TWEET or RETWEET, instead of FALSE / TRUE
 #Define some colors to use throughout
 my_colors <- c("#E69F00", "#56B4E9", "#009E73", "#CC79A7", "#D55E00", "#D65E00", "#6C5B7B", "#355C7D")
 grid.col = c("TRUE" = "grey", "FALSE" = "grey", "anger" = my_colors[1], "anticipation" = my_colors[2], "disgust" = my_colors[3], "fear" = my_colors[4], "joy" = my_colors[5], "sadness" = my_colors[6], "surprise" = my_colors[7], "trust" = my_colors[8])
@@ -891,53 +881,26 @@ title("FinTech Sector: Relationship Between Mood and Tweets")
 ```{r}
 # BANK
 # Load Bank data from HDD
-load('../../data/output/smm-banks-fintech-output-banks-data-all-tweets.Rdata')
+#load('../../data/output/smm-banks-fintech-output-banks-data-all-tweets.Rdata')
+load('../../data/output/smm-banks-fintech-output-banks-data-all-tweets2.Rdata')
 
 # Capture only retweets
 banks_data_retweets <- filter(banks_data_all_tweets, isRetweet == "TRUE")
 
-# 1. Prep data to tidy text format, undertake sentiment analysis based on individual words, use tidytext libs
-undesirable_words <- c(" der ", " die ", " das ", "hey", "la", "da", "uh", "ah")
-# Create tidy text format: Unnested, Unsummarized, -Undesirables, Stop and Short words
-ba_data_tidy <- banks_data_retweets %>%
-  unnest_tokens(word, text) %>% #Break the text into individual words
-  filter(!word %in% undesirable_words) %>% #Remove undesirables
-  filter(!nchar(word) < 3) %>% #Words like "ah" or "oo"
-  anti_join(get_stopwords(language="de")) #Data provided by the tidytext package, Language = DE
-
-glimpse(ba_data_tidy)
-
-# Call syuzhet multilanguage sentiment analysis method, on tidy text format (WORDS)
-ba_data_nrc_tidy <- get_nrc_sentiment(ba_data_tidy$word, language = "german")
-# With PARALLELIZATION, cluster creating for 2 cores
-cl <- makeCluster(2)
-clusterExport(cl = cl, c("get_nrc_sentiment"))
-ba_data_nrc_tidy <- get_nrc_sentiment(ba_data_tidy$word, language = "german", cl=cl)
-stopCluster(cl)
-
-# 2. Prep data to clean tweets (whole sentences), undertake sentiment analysis based on tweets
+# 1. Prep data to clean tweets (whole sentences), undertake sentiment analysis based on tweets
 ba_retweets_clean <- cleanTweets(banks_data_retweets$text)
-#ba_retweets_clean = unique(ba_retweets_clean) # del redundant tweets?
+ba_retweets_clean = unique(ba_retweets_clean) # del redundant tweets?
 head (ba_retweets_clean)
 
 # Call SYUZHET multilanguage sentiment analysis method, on cleaned tweets (SENTENCES)
-ba_data_nrc <- get_nrc_sentiment(ba_retweets_clean, language = "german")
+#ba_data_nrc <- get_nrc_sentiment(ba_retweets_clean, language = "german")
 # With PARALLELIZATION, cluster creating for 2 cores
 cl <- makeCluster(2)
 clusterExport(cl = cl, c("get_nrc_sentiment"))
 ba_data_nrc <- get_nrc_sentiment(ba_retweets_clean, language = "german", cl=cl)
 stopCluster(cl)
 
-# 3. Plotting
-# Plots, WORDS (tidytext format)
-barplot(
-  sort(colSums(prop.table(ba_data_nrc_tidy[, 1:8]))), 
-  horiz = TRUE, 
-  cex.names = 0.7, 
-  las = 1, 
-  main = "Emotions in Banking", xlab="Percentage"
-)
-
+# 2. Plotting
 # Plots, SENTENCES (whole tweets, sentences)
 barplot(
   sort(colSums(prop.table(ba_data_nrc[, 1:8]))), 
@@ -948,14 +911,14 @@ barplot(
 )
 
 
-# 4.B. EXTRA Plotting
+# 3.B. EXTRA Plotting
 # Prep data to clean tweets (whole sentences), undertake sentiment analysis based on tweets
 ba_alltweets_clean <- cleanTweets(banks_data_all_tweets$text)
-#ft_retweets_clean = unique(ft_retweets_clean) # del redundant tweets?
+ba_retweets_clean = unique(ba_retweets_clean) # del redundant tweets?
 head (ba_alltweets_clean)
 
 # Call SYUZHET multilanguage sentiment analysis method, on cleaned tweets (SENTENCES)
-ba_data_nrc_syu_all <- get_nrc_sentiment(ba_alltweets_clean, language = "german")
+#ba_data_nrc_syu_all <- get_nrc_sentiment(ba_alltweets_clean, language = "german")
 # With PARALLELIZATION, cluster creating for 2 cores
 cl <- makeCluster(2)
 clusterExport(cl = cl, c("get_nrc_sentiment"))
@@ -986,6 +949,7 @@ ba_mood <-  ba_melt_syu %>%
 ba_mood <- ba_mood[c("variable", "isRetweet", "variable_sum")]
 
 # Plot the BANKS mood ring!
+# TODO: Description TWEET or RETWEET, instead of FALSE / TRUE
 #Define some colors to use throughout
 my_colors <- c("#E69F00", "#56B4E9", "#009E73", "#CC79A7", "#D55E00", "#D65E00", "#6C5B7B", "#355C7D")
 grid.col = c("TRUE" = "grey", "FALSE" = "grey", "anger" = my_colors[1], "anticipation" = my_colors[2], "disgust" = my_colors[3], "fear" = my_colors[4], "joy" = my_colors[5], "sadness" = my_colors[6], "surprise" = my_colors[7], "trust" = my_colors[8])
@@ -996,6 +960,17 @@ circos.par(gap.after = c(rep(5, length(unique(ba_mood[[1]])) - 1), 15,
                          rep(5, length(unique(ba_mood[[2]])) - 1), 15))
 chordDiagram(ba_mood, grid.col = grid.col, transparency = .2)
 title("Banks Sector: Relationship Between Mood and Tweets")
+
+
+```
+
+### Hypothesis testing H5
+```{r}
+
+# TODO
+# 1. Testing for normal distribution (Shapiro-Wilk) for emotional dimension score: Trust. Both sectors, banks vs. FinTech
+# 2. Testing via t-test or Wilcoxon
+# 3. Results
 
 
 
