@@ -21,12 +21,14 @@ library(magrittr) # Forward pipe operator
 library(mvnormtest) # Tests for multivariate normality
 library(parallel) # Parallelization / multi-core computation usage
 library(psych) # Stats
+library(RColorBrewer) # Colors
 library(reshape2) # Reshape data
 library(scatterplot3d) # 3d plots, MLR
 library(stringr) # String ops
 library(syuzhet) # Stanford NLP lib, citation needed
 library(tidytext) # Text mining
 library(twitteR) # Twitter API lib
+
 
 
 ```
@@ -36,6 +38,9 @@ library(twitteR) # Twitter API lib
 ```{r}
 # Current working dir
 getwd()
+
+# turn-off scientific notation like 1e+48
+options(scipen=999)
 
 # Load authentication functions
 source("../functions/auth.R")
@@ -413,14 +418,14 @@ abline(si_model_fintech$coefficients[1], si_model_fintech$coefficients[2], col="
 # Here follows H3 testing. Measurement variables are: a. Message length, b. Message likes, c. Message retweets.
 # 1. Corporate messages (tweets) will be collected, from both sectors Banks and FinTech.
 # 2. Two each message a column will be added: Measurement variable a.: Message length
-# 3. Two MANOVA (2 DVs, 1 IV) regression models will be build, for both sectors Banks and FinTech.
+# 3. Two MANOVA (with 2 DVs, 1 IV) regression models will be build, for both sectors Banks and FinTech.
 
 # Load FinTech data from HDD
-load('../../data/output/smm-banks-fintech-output-fintech-data-all-tweets.Rdata')
-#load('../../data/output/smm-banks-fintech-output-fintech-data-all-tweets2.Rdata')
+#load('../../data/output/smm-banks-fintech-output-fintech-data-all-tweets.Rdata')
+load('../../data/output/smm-banks-fintech-output-fintech-data-all-tweets2.Rdata')
 # Load Bank data from HDD
-load('../../data/output/smm-banks-fintech-output-banks-data-all-tweets.Rdata')
-#load('../../data/output/smm-banks-fintech-output-banks-data-all-tweets2.Rdata')
+#load('../../data/output/smm-banks-fintech-output-banks-data-all-tweets.Rdata')
+load('../../data/output/smm-banks-fintech-output-banks-data-all-tweets2.Rdata')
 
 # 1. Retweets will be collected, from both sectors Banks and FinTech.
 # Filter for retweets
@@ -442,8 +447,6 @@ banks_data_only_tweets$text_length <- nchar(banks_data_only_tweets$text)
 describe(fintech_data_only_tweets$text_length)
 describe(banks_data_only_tweets$text_length)
 
-# TODO: Validation for multivariate tests, e.g. mshapiro.test?
-
 # QQ-plots for showing correlation
 qqplot(fintech_data_only_tweets$text_length, fintech_data_only_tweets$favoriteCount)
 qqplot(fintech_data_only_tweets$text_length, fintech_data_only_tweets$retweetCount)
@@ -453,6 +456,27 @@ qqplot(banks_data_only_tweets$text_length, banks_data_only_tweets$retweetCount)
 # Histograms about text_length
 hist(fintech_data_only_tweets$text_length)
 hist(banks_data_only_tweets$text_length)
+
+# Validation for multivariate tests, Shapiro-Wilk test
+# BANKS
+# Subsetting the 2 DVs
+ba_shap_dvs <- dplyr::select(banks_data_only_tweets, favoriteCount, retweetCount)
+ba_shap_dvs <- as.matrix(ba_shap_dvs) # n x p numeric matrix of the 2 DVs
+
+# Test Multivariate Normality for the 2 DVs
+M <- t(ba_shap_dvs)
+mshapiro.test(M)
+# p < 0.00
+
+# FINTECH
+# Subsetting the 2 DVs
+ft_shap_dvs <- dplyr::select(fintech_data_only_tweets, favoriteCount, retweetCount)
+ft_shap_dvs <- as.matrix(ft_shap_dvs) # n x p numeric matrix of the 2 DVs
+
+# Test Multivariate Normality for the 2 DVs
+M <- t(ft_shap_dvs)
+mshapiro.test(M)
+# p < 0.00
 
 # Do the MANOVA test, FINTECH
 ft_res_man <- manova(cbind(favoriteCount, retweetCount) ~ text_length, data = fintech_data_only_tweets)
@@ -468,14 +492,15 @@ summary.aov(ba_res_man)
 
 # Plotting
 # 3D plot FINTECH
+
 attach(fintech_data_only_tweets) 
 s3d_ft <-scatterplot3d(text_length, favoriteCount, retweetCount, pch=16, highlight.3d=TRUE,
-  type="h", main="3D Scatterplot FinTech")
+  type="h", main="3D Scatterplot FinTech", , xlab ="Tweet length", ylab = "Favorites", zlab = "Retweets", col.axis = "gray", col.grid = "gray")
 
 # 3D plot BANKS
 attach(banks_data_only_tweets) 
 s3d_ba <-scatterplot3d(text_length, favoriteCount, retweetCount, pch=16, highlight.3d=TRUE,
-  type="h", main="3D Scatterplot Banks")
+  type="h", main="3D Scatterplot Banks", , xlab ="Tweet length", ylab = "Favorites", zlab = "Retweets", col.axis = "gray", col.grid = "gray")
 
 
 
