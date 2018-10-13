@@ -1018,5 +1018,10 @@ syu_trust_res_wilcox <- wilcox.test(trust ~ type, data = ba_ft_syu_wcox,
 syu_trust_res_wilcox
 # p < 0.000
 
+# Further stats properties
+descr_ba <- describe(ba_data_nrc)
+descr_ft <- describe(ft_data_nrc_syu)
+
+
 
 ```
