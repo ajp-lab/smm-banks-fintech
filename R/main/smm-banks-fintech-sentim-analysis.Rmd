@@ -866,7 +866,9 @@ ft_mood$isRetweet[ft_mood$isRetweet == "FALSE"]  <- c("TWEET")
 ft_mood$isRetweet[ft_mood$isRetweet == "TRUE"]   <- c("RETWEET") 
 
 
-# Plot the final FINTECH mood ring!
+
+# Plot the final FINTECH mood ring in extra high quality, vector graphics SVG format!
+svg(file="../../img/charts-sentiment/ft-moodring.svg",width=5,height=5, pointsize=10)
 # Colors are tried to define them accordingly to Plutchik´s color wheel (2001) to represent the emotions.
 grid.col = c("TWEET" = "aliceblue", "RETWEET" = "aliceblue", "anger" = "orangered2", "anticipation" = "orange2", "disgust" = "mediumpurple2", "fear" = "green4", "joy" = "gold2", "sadness" = "deepskyblue2", "surprise" = "dodgerblue2", "trust" = "olivedrab3")
 
@@ -876,7 +878,7 @@ circos.par(gap.after = c(rep(5, length(unique(ft_mood[[1]])) - 1), 15,
                          rep(5, length(unique(ft_mood[[2]])) - 1), 15))
 chordDiagram(ft_mood, grid.col = grid.col, transparency = .2)
 title("FinTech: Emotional Relationships - Tweets and Retweets")
-
+dev.off()
 
 ```
 
@@ -966,7 +968,8 @@ ba_mood <- ba_mood[c("variable", "isRetweet", "variable_sum")]
 ba_mood$isRetweet[ba_mood$isRetweet == "FALSE"]  <- c("TWEET")
 ba_mood$isRetweet[ba_mood$isRetweet == "TRUE"]   <- c("RETWEET")
 
-# Plot the BANKS mood ring!
+# Plot the final BANKS mood ring in extra high quality, vector graphics SVG format!
+svg(file="../../img/charts-sentiment/ba-moodring.svg",width=5,height=5, pointsize=10)
 # Colors are tried to define them accordingly to Plutchik´s color wheel (2001) to represent the emotions.
 grid.col = c("TWEET" = "aliceblue", "RETWEET" = "aliceblue", "anger" = "orangered2", "anticipation" = "orange2", "disgust" = "mediumpurple2", "fear" = "green4", "joy" = "gold2", "sadness" = "deepskyblue2", "surprise" = "dodgerblue2", "trust" = "olivedrab3")
 
@@ -976,18 +979,44 @@ circos.par(gap.after = c(rep(5, length(unique(ba_mood[[1]])) - 1), 15,
                          rep(5, length(unique(ba_mood[[2]])) - 1), 15))
 chordDiagram(ba_mood, grid.col = grid.col, transparency = .2)
 title("Banking: Emotional Relationships - Tweets and Retweets")
-
+dev.off()
 
 ```
 
-### Hypothesis testing H5
+### Hypothesis testing H5. H5: Companies in the Swiss FinTech sector experience higher trust based on responses to corporate tweets than Swiss banking companies.
 ```{r}
 
-# TODO
-# 1. Testing for normal distribution (Shapiro-Wilk) for emotional dimension score: Trust. Both sectors, banks vs. FinTech
-# 2. Testing via t-test or Wilcoxon
-# 3. Results
+# 1. Stats properties
+# 2. Testing for normal distribution (Shapiro-Wilk) for emotional dimension score: Trust. Both sectors, banks vs. FinTech
+# 3. Testing via t-test or Wilcoxon
+# 4. Results
 
+# Check only retweets, banks and FinTech
+ba_data_nrc
+ft_data_nrc_syu
+
+# 1. Stats properties
+describe(ba_data_nrc$trust)
+describe(ft_data_nrc_syu$trust)
+hist(ba_data_nrc$trust)
+hist(ft_data_nrc_syu$trust)
+
+# 2. Shapiro test for normal distribution
+with(ba_data_nrc, shapiro.test(ba_data_nrc$trust))
+with(ft_data_nrc_syu, shapiro.test(ft_data_nrc_syu$trust))
+
+# 3. Not normal distributed, so Wilcoxon rank-sum test
+# Write types into dataset, merge them
+ba_data_nrc$type <- rep("bank", length(ba_data_nrc$trust))
+ft_data_nrc_syu$type <- rep("fintech", length(ft_data_nrc_syu$trust))
+ba_ft_syu_wcox <- rbind(ba_data_nrc, ft_data_nrc_syu)
+
+# 4. Wilcoxon ranked-sum test
+syu_trust_res_wilcox <- wilcox.test(trust ~ type, data = ba_ft_syu_wcox,
+                   exact = FALSE, alternative="less")
+
+syu_trust_res_wilcox
+# p < 0.000
 
 
 ```
