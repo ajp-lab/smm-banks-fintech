@@ -508,8 +508,7 @@ s3d_ba <-scatterplot3d(text_length, favoriteCount, retweetCount, pch=16, highlig
 ### References: 
 ### CRAN package, R libs to access Google NLP AP: https://cran.r-project.org/web/packages/googleLanguageR/vignettes/nlp.html
 ### Data pre-cleaning: eBook, Mastering Social Media Mining in R (Ravindran, 2015), Cleaning the corpus
-### Cloud Natural Language by Google: https://cloud.google.com/natural-language/
-### https://taylorwhitten.github.io/blog/Google_NLP_SentimentAnalysis
+### Cloud Natural Language by Google: https://cloud.google.com/natural-language/, https://taylorwhitten.github.io/blog/Google_NLP_SentimentAnalysis
 ```{r}
 # Here follows H4 testing. 
 # Measurement variables are: a. Polarity / Sentiment score of msg / tweet in (positive, neutral, negative: -1.0 to 1.0)
@@ -669,7 +668,7 @@ group_by(df_nlp_plot_ba_ft, type) %>%
 with(df_nlp_plot_ba_ft, shapiro.test(score[type == "Banks"]))
 with(df_nlp_plot_ba_ft, shapiro.test(score[type == "FinTech"]))
 
-# Not normal distributed, so wilcoxon test
+# Not normal distributed, so Wilcoxon rank-sum test
 nlp_res_wilcox <- wilcox.test(score ~ type, data = df_nlp_plot_ba_ft,
                    exact = FALSE)
 
@@ -798,7 +797,7 @@ title("FinTech Sector: Relationship Between Mood and Tweets")
 # --- OTHER METHODOLOGY: SYUZHET ---
 # 1.B. SYUZHET: Prep data to clean tweets (whole sentences), undertake sentiment analysis based on tweets
 ft_retweets_clean <- cleanTweets(fintech_data_retweets$text)
-ft_retweets_clean = unique(ft_retweets_clean) # del redundant tweets?
+ft_retweets_clean = unique(ft_retweets_clean) # del redundant tweets
 head (ft_retweets_clean)
 
 # Call SYUZHET multilanguage sentiment analysis method, on cleaned tweets (SENTENCES)
@@ -809,20 +808,20 @@ clusterExport(cl = cl, c("get_nrc_sentiment"))
 ft_data_nrc_syu <- get_nrc_sentiment(ft_retweets_clean, language = "english", cl=cl)
 stopCluster(cl)
 
-# 2.B. Plotting
+# 2.B. RETWEETS Plotting
 # Plots, SENTENCES (whole tweets, sentences)
 barplot(
   sort(colSums(prop.table(ft_data_nrc_syu[, 1:8]))), 
   horiz = TRUE, 
   cex.names = 0.7, 
-  las = 1, 
-  main = "Emotions in FinTech", xlab="Percentage"
+  las = 1,
+  col=c("white"),
+  main = "Emotional dimensions - FinTech", xlab="Percentage"
 )
 
 # 3.B. EXTRA Plotting
 # Prep data to clean tweets (whole sentences), undertake sentiment analysis based on tweets
 ft_alltweets_clean <- cleanTweets(fintech_data_all_tweets$text)
-ft_alltweets_clean = unique(ft_alltweets_clean) # del redundant tweets?
 head (ft_alltweets_clean)
 
 # Call SYUZHET multilanguage sentiment analysis method, on cleaned tweets (SENTENCES)
@@ -836,6 +835,12 @@ stopCluster(cl)
 # Merging to a big dataset, FinTech syuzhet
 ft_big_syu <- cbind(ft_data_nrc_syu_all, ft_alltweets_clean)
 ft_big_syu <- cbind(ft_big_syu, fintech_data_all_tweets)
+
+# Further cleaning - DEL redundant records, if possible
+ft_big_syu = unique(ft_big_syu) # del redundant tweets
+
+# SAVE whole FinTech dataset with cleaned tweets and syuzhet NLP results
+save(ft_big_syu, file = '../../data/output/smm-banks-fintech-output-fintech-syu-nlp.Rdata')
 
 # Only select needed data for FinTech mood ring
 ft_fin_syu <- dplyr::select(ft_big_syu, isRetweet, anger, anticipation, disgust, fear, joy, sadness, surprise, trust)
@@ -856,18 +861,21 @@ ft_mood <-  ft_melt_syu %>%
 
 ft_mood <- ft_mood[c("variable", "isRetweet", "variable_sum")]
 
-# Plot the FINTECH mood ring!
-# TODO: Description TWEET or RETWEET, instead of FALSE / TRUE
-#Define some colors to use throughout
-my_colors <- c("#E69F00", "#56B4E9", "#009E73", "#CC79A7", "#D55E00", "#D65E00", "#6C5B7B", "#355C7D")
-grid.col = c("TRUE" = "grey", "FALSE" = "grey", "anger" = my_colors[1], "anticipation" = my_colors[2], "disgust" = my_colors[3], "fear" = my_colors[4], "joy" = my_colors[5], "sadness" = my_colors[6], "surprise" = my_colors[7], "trust" = my_colors[8])
+# Rename column values isRetweet = false -> TWEET, isRetweet = true -> RETWEET
+ft_mood$isRetweet[ft_mood$isRetweet == "FALSE"]  <- c("TWEET")
+ft_mood$isRetweet[ft_mood$isRetweet == "TRUE"]   <- c("RETWEET") 
+
+
+# Plot the final FINTECH mood ring!
+# Colors are tried to define them accordingly to Plutchik´s color wheel (2001) to represent the emotions.
+grid.col = c("TWEET" = "aliceblue", "RETWEET" = "aliceblue", "anger" = "orangered2", "anticipation" = "orange2", "disgust" = "mediumpurple2", "fear" = "green4", "joy" = "gold2", "sadness" = "deepskyblue2", "surprise" = "dodgerblue2", "trust" = "olivedrab3")
 
 circos.clear()
 #Set the gap size
 circos.par(gap.after = c(rep(5, length(unique(ft_mood[[1]])) - 1), 15,
                          rep(5, length(unique(ft_mood[[2]])) - 1), 15))
 chordDiagram(ft_mood, grid.col = grid.col, transparency = .2)
-title("FinTech Sector: Relationship Between Mood and Tweets")
+title("FinTech: Emotional Relationships - Tweets and Retweets")
 
 
 ```
@@ -875,7 +883,7 @@ title("FinTech Sector: Relationship Between Mood and Tweets")
 
 ### Banking - sentiment analysis mostly in DE
 ### References:
-### tidytext: https://www.datacamp.com/community/tutorials/sentiment-analysis-R
+### tidytext, circlize: https://www.datacamp.com/community/tutorials/sentiment-analysis-R
 ### syuzhet package (Stanford NLP): https://cran.r-project.org/web/packages/syuzhet/vignettes/syuzhet-vignette.html
 ### German stopwords: https://www.inwt-statistics.de/blog-artikel-lesen/text-mining-part-2-making-of.html
 ```{r}
@@ -884,12 +892,12 @@ title("FinTech Sector: Relationship Between Mood and Tweets")
 #load('../../data/output/smm-banks-fintech-output-banks-data-all-tweets.Rdata')
 load('../../data/output/smm-banks-fintech-output-banks-data-all-tweets2.Rdata')
 
-# Capture only retweets
+# Load ALL TWEETS, Capture retweets
 banks_data_retweets <- filter(banks_data_all_tweets, isRetweet == "TRUE")
 
-# 1. Prep data to clean tweets (whole sentences), undertake sentiment analysis based on tweets
+# 1. SYUZHET: Prep data to clean tweets (whole sentences), undertake sentiment analysis based on tweets
 ba_retweets_clean <- cleanTweets(banks_data_retweets$text)
-ba_retweets_clean = unique(ba_retweets_clean) # del redundant tweets?
+ba_retweets_clean = unique(ba_retweets_clean) # del redundant tweets
 head (ba_retweets_clean)
 
 # Call SYUZHET multilanguage sentiment analysis method, on cleaned tweets (SENTENCES)
@@ -906,15 +914,15 @@ barplot(
   sort(colSums(prop.table(ba_data_nrc[, 1:8]))), 
   horiz = TRUE, 
   cex.names = 0.7, 
-  las = 1, 
-  main = "Emotions in Banking", xlab="Percentage"
+  las = 1,
+  col= c("white"),
+  main = "Emotional dimensions - Banking", xlab="Percentage"
 )
 
 
 # 3.B. EXTRA Plotting
 # Prep data to clean tweets (whole sentences), undertake sentiment analysis based on tweets
 ba_alltweets_clean <- cleanTweets(banks_data_all_tweets$text)
-ba_retweets_clean = unique(ba_retweets_clean) # del redundant tweets?
 head (ba_alltweets_clean)
 
 # Call SYUZHET multilanguage sentiment analysis method, on cleaned tweets (SENTENCES)
@@ -928,6 +936,12 @@ stopCluster(cl)
 # Merging to a big dataset, Banks syuzhet
 ba_big_syu <- cbind(ba_data_nrc_syu_all, ba_alltweets_clean)
 ba_big_syu <- cbind(ba_big_syu, banks_data_all_tweets)
+
+# Further cleaning - DEL redundant records, if possible
+ba_big_syu = unique(ba_big_syu) # del redundant tweets
+
+# SAVE whole Bank dataset with cleaned tweets and syuzhet NLP results
+save(ba_big_syu, file = '../../data/output/smm-banks-fintech-output-banks-syu-nlp.Rdata')
 
 # Only select needed data for Banks mood ring
 ba_fin_syu <- dplyr::select(ba_big_syu, isRetweet, anger, anticipation, disgust, fear, joy, sadness, surprise, trust)
@@ -948,18 +962,20 @@ ba_mood <-  ba_melt_syu %>%
 
 ba_mood <- ba_mood[c("variable", "isRetweet", "variable_sum")]
 
+# Rename column values isRetweet = false -> TWEET, isRetweet = true -> RETWEET
+ba_mood$isRetweet[ba_mood$isRetweet == "FALSE"]  <- c("TWEET")
+ba_mood$isRetweet[ba_mood$isRetweet == "TRUE"]   <- c("RETWEET")
+
 # Plot the BANKS mood ring!
-# TODO: Description TWEET or RETWEET, instead of FALSE / TRUE
-#Define some colors to use throughout
-my_colors <- c("#E69F00", "#56B4E9", "#009E73", "#CC79A7", "#D55E00", "#D65E00", "#6C5B7B", "#355C7D")
-grid.col = c("TRUE" = "grey", "FALSE" = "grey", "anger" = my_colors[1], "anticipation" = my_colors[2], "disgust" = my_colors[3], "fear" = my_colors[4], "joy" = my_colors[5], "sadness" = my_colors[6], "surprise" = my_colors[7], "trust" = my_colors[8])
+# Colors are tried to define them accordingly to Plutchik´s color wheel (2001) to represent the emotions.
+grid.col = c("TWEET" = "aliceblue", "RETWEET" = "aliceblue", "anger" = "orangered2", "anticipation" = "orange2", "disgust" = "mediumpurple2", "fear" = "green4", "joy" = "gold2", "sadness" = "deepskyblue2", "surprise" = "dodgerblue2", "trust" = "olivedrab3")
 
 circos.clear()
 #Set the gap size
 circos.par(gap.after = c(rep(5, length(unique(ba_mood[[1]])) - 1), 15,
                          rep(5, length(unique(ba_mood[[2]])) - 1), 15))
 chordDiagram(ba_mood, grid.col = grid.col, transparency = .2)
-title("Banks Sector: Relationship Between Mood and Tweets")
+title("Banking: Emotional Relationships - Tweets and Retweets")
 
 
 ```
