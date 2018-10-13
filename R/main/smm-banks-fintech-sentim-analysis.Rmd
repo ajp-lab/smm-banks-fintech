@@ -416,11 +416,11 @@ abline(si_model_fintech$coefficients[1], si_model_fintech$coefficients[2], col="
 # 3. Two MANOVA (2 DVs, 1 IV) regression models will be build, for both sectors Banks and FinTech.
 
 # Load FinTech data from HDD
-load('../../data/output/smm-banks-fintech-output-fintech-data-all-tweets.Rdata')
-#load('../../data/output/smm-banks-fintech-output-fintech-data-all-tweets2.Rdata')
+#load('../../data/output/smm-banks-fintech-output-fintech-data-all-tweets.Rdata')
+load('../../data/output/smm-banks-fintech-output-fintech-data-all-tweets2.Rdata')
 # Load Bank data from HDD
-load('../../data/output/smm-banks-fintech-output-banks-data-all-tweets.Rdata')
-#load('../../data/output/smm-banks-fintech-output-banks-data-all-tweets2.Rdata')
+#load('../../data/output/smm-banks-fintech-output-banks-data-all-tweets.Rdata')
+load('../../data/output/smm-banks-fintech-output-banks-data-all-tweets2.Rdata')
 
 # 1. Retweets will be collected, from both sectors Banks and FinTech.
 # Filter for retweets
