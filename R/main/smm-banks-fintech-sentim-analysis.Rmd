@@ -1039,6 +1039,7 @@ descr_ft <- describe(ft_data_nrc_syu)
 
 ### Hypothesis testing H5. Bonus: Mood ring of tweets compared to retweets (8 emotions of tweets compared to 8 emotions of retweets)
 ### Hint: http://www.r-graph-gallery.com/123-circular-plot-circlize-package-2/
+### Readme: https://jokergoo.github.io/circlize_book/book/the-chorddiagram-function.html
 ```{r}
 # LOAD again whole Bank dataset with cleaned tweets and syuzhet NLP results
 load('../../data/output/smm-banks-fintech-output-banks-syu-nlp.Rdata')
@@ -1082,6 +1083,10 @@ circos.clear()
 # Make the circular plot
 chordDiagram(as.data.frame(dat), transparency = 0.5)
 title("Example")
+
+
+
+
 
 ```
 
