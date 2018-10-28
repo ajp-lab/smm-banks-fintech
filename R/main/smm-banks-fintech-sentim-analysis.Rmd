@@ -90,7 +90,7 @@ str(zkbch_tweets)
 zkbch_tweets
 
 # Get user timelines
-tweets = userTimeline("zkb_ch", n=50)
+tweets = userTimeline("ubsschweiz", n=500)
 length(tweets)
 tweetsDF_test <- twListToDF(tweets)
 head(tweetsDF_test)
@@ -792,8 +792,18 @@ chordDiagram(tweet_mood, grid.col = grid.col, transparency = .2)
 title("FinTech Sector: Relationship Between Mood and Tweets")
 ```
 
-### FinTech - SYUZHET method (The SELECTED one)
+### FinTech - SYUZHET method (The SELECTED one), here starts the official H5 testing
 ```{r}
+
+# FINTECH
+# Load FinTech data from HDD
+#load('../../data/output/smm-banks-fintech-output-fintech-data-all-tweets.Rdata')
+load('../../data/output/smm-banks-fintech-output-fintech-data-all-tweets2.Rdata')
+
+# Load ALL TWEETS, Capture retweets
+fintech_data_retweets <- filter(fintech_data_all_tweets, isRetweet == "TRUE")
+glimpse(fintech_data_retweets)
+
 # --- OTHER METHODOLOGY: SYUZHET ---
 # 1.B. SYUZHET: Prep data to clean tweets (whole sentences), undertake sentiment analysis based on tweets
 ft_retweets_clean <- cleanTweets(fintech_data_retweets$text)
@@ -841,6 +851,8 @@ ft_big_syu = unique(ft_big_syu) # del redundant tweets
 
 # SAVE whole FinTech dataset with cleaned tweets and syuzhet NLP results
 save(ft_big_syu, file = '../../data/output/smm-banks-fintech-output-fintech-syu-nlp.Rdata')
+# LOAD again (if needed in a later stage for further work)
+load('../../data/output/smm-banks-fintech-output-fintech-syu-nlp.Rdata')
 
 # Only select needed data for FinTech mood ring
 ft_fin_syu <- dplyr::select(ft_big_syu, isRetweet, anger, anticipation, disgust, fear, joy, sadness, surprise, trust)
@@ -864,7 +876,6 @@ ft_mood <- ft_mood[c("variable", "isRetweet", "variable_sum")]
 # Rename column values isRetweet = false -> TWEET, isRetweet = true -> RETWEET
 ft_mood$isRetweet[ft_mood$isRetweet == "FALSE"]  <- c("TWEET")
 ft_mood$isRetweet[ft_mood$isRetweet == "TRUE"]   <- c("RETWEET") 
-
 
 
 # Plot the final FINTECH mood ring in extra high quality, vector graphics SVG format!
@@ -944,6 +955,8 @@ ba_big_syu = unique(ba_big_syu) # del redundant tweets
 
 # SAVE whole Bank dataset with cleaned tweets and syuzhet NLP results
 save(ba_big_syu, file = '../../data/output/smm-banks-fintech-output-banks-syu-nlp.Rdata')
+# LOAD again (if needed in a later stage for further work)
+load('../../data/output/smm-banks-fintech-output-banks-syu-nlp.Rdata')
 
 # Only select needed data for Banks mood ring
 ba_fin_syu <- dplyr::select(ba_big_syu, isRetweet, anger, anticipation, disgust, fear, joy, sadness, surprise, trust)
@@ -1022,6 +1035,53 @@ syu_trust_res_wilcox
 descr_ba <- describe(ba_data_nrc)
 descr_ft <- describe(ft_data_nrc_syu)
 
+```
 
+### Hypothesis testing H5. Bonus: Mood ring of tweets compared to retweets (8 emotions of tweets compared to 8 emotions of retweets)
+### Hint: http://www.r-graph-gallery.com/123-circular-plot-circlize-package-2/
+```{r}
+# LOAD again whole Bank dataset with cleaned tweets and syuzhet NLP results
+load('../../data/output/smm-banks-fintech-output-banks-syu-nlp.Rdata')
+# LOAD again whole FinTech dataset with cleaned tweets and syuzhet NLP results
+load('../../data/output/smm-banks-fintech-output-fintech-syu-nlp.Rdata')
+
+ba_big_syu
+ft_big_syu
+
+# Filter bank and fintech tweets and responses
+ba_resp <- filter(ba_big_syu, id %in% replyToSID | replyToSID %in% id)
+ft_resp <- filter(ft_big_syu, id %in% replyToSID | replyToSID %in% id)
+
+# ... Banks
+# Filter and divide into bank and clients communication
+ba_resp_banks <- filter(ba_resp, screenName %in% tw_parse) # communication banks
+ba_resp_clients <- filter(ba_resp, !screenName %in% tw_parse) # communication clients
+
+# Select only the emotional dimensions
+ba_resp_banks_mood <- dplyr::select(ba_resp_banks, anger, anticipation, disgust, fear, joy, sadness, surprise, trust)
+ba_resp_clients_mood <- dplyr::select(ba_resp_clients, anger, anticipation, disgust, fear, joy, sadness, surprise, trust)
+
+
+
+# ... Fintech
+# Filter and divide into fintech and clients communication
+ft_resp_ft <- filter(ft_resp, screenName %in% tw_parse) # communication banks
+ft_resp_clients <- filter(ft_resp, !screenName %in% tw_parse) # communication clients
+
+
+# Circlize plot example
+#Create data
+name=c(3,10,10,3,6,7,8,3)
+feature=paste("feature ", c(1,1,2,2,3,3,4,4) , sep="")
+dat <- data.frame(name,feature)
+dat <- with(dat, table(name, feature))
+ 
+dat
+
+circos.clear() 
+# Make the circular plot
+chordDiagram(as.data.frame(dat), transparency = 0.5)
+title("Example")
 
 ```
+
