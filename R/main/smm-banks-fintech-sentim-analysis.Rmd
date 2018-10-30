@@ -1053,38 +1053,47 @@ ft_big_syu
 ba_resp <- filter(ba_big_syu, id %in% replyToSID | replyToSID %in% id)
 ft_resp <- filter(ft_big_syu, id %in% replyToSID | replyToSID %in% id)
 
-# ... Banks
+# Banks
 # Filter and divide into bank and clients communication
 # ba_resp_banks <- filter(ba_resp, screenName %in% tw_parse) # communication banks
 # ba_resp_clients <- filter(ba_resp, !screenName %in% tw_parse) # communication clients
 
-# Select only the emotional dimensions
-# ba_resp_banks_mood <- dplyr::select(ba_resp_banks, anger, anticipation, disgust, fear, joy, sadness, surprise, trust)
-# ba_resp_clients_mood <- dplyr::select(ba_resp_clients, anger, anticipation, disgust, fear, joy, sadness, surprise, trust)
+# Select only the relevant fields: emotional dimensions, id, parent id
+ba_resp <- dplyr::select(ba_resp, anger, anticipation, disgust, fear, joy, sadness, surprise, trust, negative, positive, replyToSID, id)
 
-# Cleaning of tweets classified with only zeros, not now
+# Melting data for reshaping it into a better processable format
+ba_resp_melt <- melt(data = ba_resp, id.vars = c("replyToSID", "id"),
+                    measure.vars =c("anger", "anticipation", "disgust", "fear", "joy", "sadness", "surprise", "trust", "negative", "positive"))
+
+# Cleaning of tweets classified with only zeros.
 # ba_resp <- filter(ba_resp, !anger == 0 | !anticipation == 0 | !disgust == 0 | !fear == 0 | !joy == 0 | !sadness == 0 | !surprise == 0 | !trust == 0)
 
 # Adjacency matrix should look like this:
-##    E1 E2 E3 E4 E5 E6
-## S1  8 13 18  6 11 14
-## S2 10 12  1  3  5  7
-## S3  2 16  4 17  9 15
+##   A B C
+## a 1 4 7
+## b 2 5 8
+## c 3 6 9
 
+## Adjacency list like this:
+##   from to value
+## 1    a  A     1
+## 2    b  B     2
+## 3    c  C     3
 
-
-
-for (i in 1:nrow(ba_resp)) {
+# TODO: Now trying to convert into a resulting adjacency list:
+for (i in 1:nrow(ba_resp_melt)) {
   print (i)
   
+  # Format example: "trust", "r_anger", "1"
   
-  tweets <- searchTwitter(df_sub_sa_banks$tw_parse[i], n=500, lang="de")
   
-  if (length(tweets) != 0) {
-    tweetsDF <- twListToDF(tweets) # Convert to DF
-    tweetsDF$tw_parse <- df_sub_sa_banks$tw_parse[i] # Keep track from which account parsed
-    banks_list[[i]] <- tweetsDF # Add it to your list
-  }
+  
+  #tweets <- searchTwitter(df_sub_sa_banks$tw_parse[i], n=500, lang="de")
+  #if (length(tweets) != 0) {
+  #  tweetsDF <- twListToDF(tweets) # Convert to DF
+  #  tweetsDF$tw_parse <- df_sub_sa_banks$tw_parse[i] # Keep track from which account parsed
+  #  banks_list[[i]] <- tweetsDF # Add it to your list
+  #}
   
 }
 
@@ -1097,8 +1106,8 @@ ft_resp_clients <- filter(ft_resp, !screenName %in% tw_parse) # communication cl
 # TODO: Circlize plot
 # Circlize plot example
 #Create data
-name=c(3,10,10,3,6,7,8,3)
-feature=paste("feature ", c(1,1,2,2,3,3,4,4) , sep="")
+name=c(3,10,10,3,6,7,8,3, 3)
+feature=paste("feature ", c(1,1,2,2,3,3,4,4, 4) , sep="")
 dat <- data.frame(name,feature)
 dat <- with(dat, table(name, feature))
  
