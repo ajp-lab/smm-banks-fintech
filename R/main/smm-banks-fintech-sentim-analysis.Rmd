@@ -1081,10 +1081,21 @@ ba_resp_melt <- melt(data = ba_resp, id.vars = c("replyToSID", "id"),
 ## 3    c  C     3
 
 # TODO: Now trying to convert into a resulting adjacency list:
-for (i in 1:nrow(ba_resp_melt)) {
-  print (i)
+# Initialize an empty myAdjList
+myAdjList <- list()
+# Loops
+for (rowIdx_i in 1:nrow(ba_resp_melt)) {
+  print (rowIdx_i)
   
-  # Format example: "trust", "r_anger", "1"
+  for (rowIdx_j in 1:nrow(ba_resp_melt)) {
+    if(ba_resp_melt$id[rowIdx_i] == ba_resp_melt$replyToSID[rowIdx_j]) {
+      myAdjList$from <- ba_resp_melt$variable[rowIdx_i]
+      myAdjList$to <- ba_resp_melt$variable[rowIdx_j]
+      myAdjList$value <- ba_resp_melt$value[rowIdx_j]
+    }
+  }
+  
+  # Format example: "anger", "r_anger", "1"
   
   
   
