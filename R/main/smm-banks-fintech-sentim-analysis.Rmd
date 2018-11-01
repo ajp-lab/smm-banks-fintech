@@ -1068,12 +1068,6 @@ ba_resp_melt <- melt(data = ba_resp, id.vars = c("replyToSID", "id"),
 # Cleaning of tweets classified with only zeros.
 # ba_resp <- filter(ba_resp, !anger == 0 | !anticipation == 0 | !disgust == 0 | !fear == 0 | !joy == 0 | !sadness == 0 | !surprise == 0 | !trust == 0)
 
-# Adjacency matrix should look like this:
-##   A B C
-## a 1 4 7
-## b 2 5 8
-## c 3 6 9
-
 ## Adjacency list like this:
 ##   from to value
 ## 1    a  A     1
@@ -1084,30 +1078,39 @@ ba_resp_melt <- melt(data = ba_resp, id.vars = c("replyToSID", "id"),
 # Initialize an empty myAdjList
 myAdjList <- list()
 # Loops
-for (rowIdx_i in 1:nrow(ba_resp_melt)) {
-  print (rowIdx_i)
+for (i in 1:nrow(ba_resp_melt)) {
+  print (i)
   
-  for (rowIdx_j in 1:nrow(ba_resp_melt)) {
-    if(ba_resp_melt$id[rowIdx_i] == ba_resp_melt$replyToSID[rowIdx_j]) {
-      myAdjList$from <- ba_resp_melt$variable[rowIdx_i]
-      myAdjList$to <- ba_resp_melt$variable[rowIdx_j]
-      myAdjList$value <- ba_resp_melt$value[rowIdx_j]
+  for (j in 1:nrow(ba_resp_melt)) {
+    print(j)
+    if(ba_resp_melt$id[i] == ba_resp_melt$replyToSID[j]) {
+      # Tweet emotion value to Retweet
+      a <- ba_resp_melt$variable[i] # Tweet
+      b <- ba_resp_melt$variable[j] # Retweet
+      c <- ba_resp_melt$value[i]
+      
+      b <- paste("R_", b, sep="") # Mark as Retweet
+      # Add
+      tmp_tw <- list(from=a, to=b, value=c)
+      
+      # Retweet emotion value to Tweet
+      d <- ba_resp_melt$variable[j] # Retweet
+      e <- ba_resp_melt$variable[i] # Tweet
+      f <- ba_resp_melt$value[j]
+      
+      d <- paste("R_", b, sep="") # Mark as Retweet
+      # Add
+      tmp_rw <- list(from=d, to=e, value=f)
+      
+      # Add to adjacency list
+      myAdjList[[]] <- tmp_tw
+      myAdjList[[]] <- tmp_rw
+      
     }
   }
-  
-  # Format example: "anger", "r_anger", "1"
-  
-  
-  
-  #tweets <- searchTwitter(df_sub_sa_banks$tw_parse[i], n=500, lang="de")
-  #if (length(tweets) != 0) {
-  #  tweetsDF <- twListToDF(tweets) # Convert to DF
-  #  tweetsDF$tw_parse <- df_sub_sa_banks$tw_parse[i] # Keep track from which account parsed
-  #  banks_list[[i]] <- tweetsDF # Add it to your list
-  #}
-  
 }
 
+ba_resp_melt$id[1]==ba_resp_melt$replyToSID[4]
 
 # TODO: Fintech
 # Filter and divide into fintech and clients communication
