@@ -1082,7 +1082,12 @@ for (i in 1:nrow(ba_resp_melt)) {
   print (i)
   
   for (j in 1:nrow(ba_resp_melt)) {
-    print(j)
+    #print(j)
+
+    # Skip if NA
+    if(is.na(ba_resp_melt$replyToSID[j])) next
+
+    # Loop through the dataset
     if(ba_resp_melt$id[i] == ba_resp_melt$replyToSID[j]) {
       # Tweet emotion value to Retweet
       a <- ba_resp_melt$variable[i] # Tweet
