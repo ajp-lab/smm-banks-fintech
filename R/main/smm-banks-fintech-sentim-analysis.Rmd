@@ -504,7 +504,7 @@ s3d_ba <-scatterplot3d(text_length, favoriteCount, retweetCount, pch=16, highlig
 ```
 
 
-## H4 Testing: H4: Companies in the Swiss FinTech sector have a higher polarity score based on responses to corporate tweets than Swiss banking companies.
+## H4 Testing: H4: Companies in the Swiss FinTech sector have a higher polarity score based on retweets to corporate tweets than Swiss banking companies.
 ### References: 
 ### CRAN package, R libs to access Google NLP AP: https://cran.r-project.org/web/packages/googleLanguageR/vignettes/nlp.html
 ### Data pre-cleaning: eBook, Mastering Social Media Mining in R (Ravindran, 2015), Cleaning the corpus
@@ -676,7 +676,7 @@ nlp_res_wilcox
 
 ```
 
-## Testing H5. H5: Companies in the Swiss FinTech sector experience higher trust based on responses to corporate tweets than Swiss banking companies.
+## Testing H5. H5: Companies in the Swiss FinTech sector experience higher trust based on retweets to corporate tweets than Swiss banking companies.
 ### References:  https://www.datacamp.com/community/tutorials/sentiment-analysis-R
 ### FinTech - sentiment analysis mostly in EN
 ```{r}
@@ -996,7 +996,7 @@ dev.off()
 
 ```
 
-### Hypothesis testing H5. H5: Companies in the Swiss FinTech sector experience higher trust based on responses to corporate tweets than Swiss banking companies.
+### Hypothesis testing H5. H5: Companies in the Swiss FinTech sector experience higher trust based on retweets to corporate tweets than Swiss banking companies.
 ```{r}
 
 # 1. Stats properties
@@ -1298,4 +1298,70 @@ title("Example")
 
 ```
 
+### Hypothesis testing H5 BONUS. H5: Companies in the Swiss FinTech sector experience higher trust based on responses to corporate tweets than Swiss banking companies.
+```{r}
+# Now the responses of trust are compared.
+# 1. Stats properties
+# 2. Testing for normal distribution (Shapiro-Wilk) for emotional dimension score: Trust. Both sectors, banks vs. FinTech
+# 3. Testing via t-test or Wilcoxon
+# 4. Results
 
+# LOAD again (banks responses)
+load('../../data/output/smm-banks-fintech-output-banks-responses.Rdata')
+# LOAD again (fintech responses)
+load('../../data/output/smm-banks-fintech-output-fintech-responses.Rdata')
+
+# Aggregate and group results banks
+ba_resp_mood <- ba_df %>%
+  filter(from == "R_trust") %>% # Only take trust responses
+  group_by(from, to) %>%
+  summarise(value = sum(value)) %>%
+  arrange(from, to) %>%
+  ungroup()
+
+# Aggregate and group results fintech
+ft_resp_mood <- ft_df %>%
+  filter(from == "R_trust") %>% # Only take trust responses
+  group_by(from, to) %>%
+  summarise(value = sum(value)) %>%
+  arrange(from, to) %>%
+  ungroup()
+
+
+# 1. Stats properties
+describe(ba_resp_mood$value)
+describe(ft_resp_mood$value)
+hist(ba_resp_mood$value)
+hist(ft_resp_mood$value)
+
+# Histogram banks with percentage
+h_ba = hist(ba_resp_mood$value, plot = FALSE)# hist(x,plot=FALSE) to avoid the plot of the histogram
+h_ba$density = h_ba$counts/sum(h_ba$counts)
+plot(h_ba,freq=FALSE)
+
+# Histogram fintech with percentage
+h_ft = hist(ft_resp_mood$value, plot = FALSE)# hist(x,plot=FALSE) to avoid the plot of the histogram
+h_ft$density = h_ft$counts/sum(h_ft$counts)
+plot(h_ft,freq=FALSE)
+
+# 2. Shapiro test for normal distribution
+with(ba_resp_mood, shapiro.test(ba_resp_mood$value))
+# W = 0.85003, p-value = 0.09534
+with(ft_resp_mood, shapiro.test(ft_resp_mood$value))
+# W = 0.82203, p-value = 0.04902
+
+# 3. Not normal distributed, so Wilcoxon rank-sum test
+# Write types into dataset, merge them
+ba_resp_mood$type <- rep("bank", length(ba_resp_mood$value))
+ft_resp_mood$type <- rep("fintech", length(ft_resp_mood$value))
+ba_ft_resp_wcox <- rbind(ba_resp_mood, ft_resp_mood)
+
+# 4. Wilcoxon ranked-sum test
+ba_ft_resp_trust_wcox <- wilcox.test(value ~ type, data = ba_ft_resp_wcox,
+                   exact = FALSE, alternative="less")
+
+ba_ft_resp_trust_wcox
+# W = 0, p-value = 0.0004455
+
+
+```
