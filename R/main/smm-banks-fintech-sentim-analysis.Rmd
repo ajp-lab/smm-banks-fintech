@@ -1037,21 +1037,17 @@ descr_ft <- describe(ft_data_nrc_syu)
 
 ```
 
-### Hypothesis testing H5. Bonus: Mood ring of tweets compared to retweets (8 emotions of tweets compared to 8 emotions of retweets)
+### Hypothesis testing H5. Bonus: Mood ring of tweets compared to responses (8 emotions of tweets put in relaton to 8 emotions of responses)
+### Sector: BANKING
 ### Hint: http://www.r-graph-gallery.com/123-circular-plot-circlize-package-2/
 ### Readme: https://jokergoo.github.io/circlize_book/book/the-chorddiagram-function.html
 ```{r}
 # LOAD again whole Bank dataset with cleaned tweets and syuzhet NLP results
 load('../../data/output/smm-banks-fintech-output-banks-syu-nlp.Rdata')
-# LOAD again whole FinTech dataset with cleaned tweets and syuzhet NLP results
-load('../../data/output/smm-banks-fintech-output-fintech-syu-nlp.Rdata')
-
 ba_big_syu
-ft_big_syu
 
-# Filter bank and fintech tweets and responses
+# Filter bank tweets and responses
 ba_resp <- filter(ba_big_syu, id %in% replyToSID | replyToSID %in% id)
-ft_resp <- filter(ft_big_syu, id %in% replyToSID | replyToSID %in% id)
 
 # Banks
 # Filter and divide into bank and clients communication
@@ -1059,24 +1055,29 @@ ft_resp <- filter(ft_big_syu, id %in% replyToSID | replyToSID %in% id)
 # ba_resp_clients <- filter(ba_resp, !screenName %in% tw_parse) # communication clients
 
 # Select only the relevant fields: emotional dimensions, id, parent id
-ba_resp <- dplyr::select(ba_resp, anger, anticipation, disgust, fear, joy, sadness, surprise, trust, negative, positive, replyToSID, id)
+ba_resp <- dplyr::select(ba_resp, anger, anticipation, disgust, fear, joy, sadness, surprise, trust, replyToSID, id)
+
+# Remove duplicates
+ba_resp = unique(ba_resp)
 
 # Melting data for reshaping it into a better processable format
 ba_resp_melt <- melt(data = ba_resp, id.vars = c("replyToSID", "id"),
-                    measure.vars =c("anger", "anticipation", "disgust", "fear", "joy", "sadness", "surprise", "trust", "negative", "positive"))
+                    measure.vars =c("anger", "anticipation", "disgust", "fear", "joy", "sadness", "surprise", "trust"))
 
 # Cleaning of tweets classified with only zeros.
 # ba_resp <- filter(ba_resp, !anger == 0 | !anticipation == 0 | !disgust == 0 | !fear == 0 | !joy == 0 | !sadness == 0 | !surprise == 0 | !trust == 0)
 
-## Adjacency list like this:
+## An adjacency list looks like this:
 ##   from to value
 ## 1    a  A     1
 ## 2    b  B     2
 ## 3    c  C     3
 
-# TODO: Now trying to convert into a resulting adjacency list:
+# Now trying to convert the tweet and response relations into an adjacency list:
 # Initialize an empty myAdjList
 myAdjList <- list()
+# Add special adj counter
+adjcounter = 1
 # Loops
 for (i in 1:nrow(ba_resp_melt)) {
   print (i)
@@ -1084,52 +1085,210 @@ for (i in 1:nrow(ba_resp_melt)) {
   for (j in 1:nrow(ba_resp_melt)) {
     #print(j)
 
-    # Skip if NA
+    # Skip if replyToSID is NA
     if(is.na(ba_resp_melt$replyToSID[j])) next
 
     # Loop through the dataset
     if(ba_resp_melt$id[i] == ba_resp_melt$replyToSID[j]) {
-      # Tweet emotion value to Retweet
+      # Emotion value from tweet to response
       a <- ba_resp_melt$variable[i] # Tweet
-      b <- ba_resp_melt$variable[j] # Retweet
-      c <- ba_resp_melt$value[i]
+      b <- ba_resp_melt$variable[j] # Response
+      c <- ba_resp_melt$value[i] # Emotion value of tweet
       
-      b <- paste("R_", b, sep="") # Mark as Retweet
+      a <- paste("T_", a, sep="") # Mark as Tweet
+      b <- paste("R_", b, sep="") # Mark as Response
       # Add
       tmp_tw <- list(from=a, to=b, value=c)
       
-      # Retweet emotion value to Tweet
-      d <- ba_resp_melt$variable[j] # Retweet
+      # Emotion value from response to tweet
+      d <- ba_resp_melt$variable[j] # Response
       e <- ba_resp_melt$variable[i] # Tweet
-      f <- ba_resp_melt$value[j]
+      f <- ba_resp_melt$value[j] # Emotion value of response
       
-      d <- paste("R_", b, sep="") # Mark as Retweet
+      d <- paste("R_", d, sep="") # Mark as Response
+      e <- paste("T_", e, sep="") # Mark as Tweet
       # Add
-      tmp_rw <- list(from=d, to=e, value=f)
+      tmp_re <- list(from=d, to=e, value=f)
       
-      # Add to adjacency list
-      myAdjList[[]] <- tmp_tw
-      myAdjList[[]] <- tmp_rw
+      # Add records to adjacency list
+      # Add tweet to response emotion value, if emotion value tweet c != 0 and emotion value response f != 0
+      if (c != 0 && f != 0) {
+        myAdjList[[adjcounter]] <- tmp_tw
+        adjcounter = adjcounter + 1
+      }
+      
+      # Add response to tweet value, if emotion value response f != 0 and emotion value tweet c != 0
+      if (f != 0 && c != 0) {
+        myAdjList[[adjcounter]] <- tmp_re
+        adjcounter = adjcounter + 1
+      }
       
     }
   }
 }
 
-ba_resp_melt$id[1]==ba_resp_melt$replyToSID[4]
+# Convert list to dataframe
+ba_df <- dplyr::bind_rows(myAdjList)
 
-# TODO: Fintech
-# Filter and divide into fintech and clients communication
-ft_resp_ft <- filter(ft_resp, screenName %in% tw_parse) # communication banks
-ft_resp_clients <- filter(ft_resp, !screenName %in% tw_parse) # communication clients
+# SAVE ba_df - tweets to responses relations
+save(ba_df, file = '../../data/output/smm-banks-fintech-output-banks-responses.Rdata')
+# LOAD again (if needed in a later stage for further work)
+load('../../data/output/smm-banks-fintech-output-banks-responses.Rdata')
 
-# TODO: Circlize plot
+# Aggregate and group results
+ba_resp_mood <- ba_df %>%
+  filter(!value == 0) %>% # important! it should not count zeros
+  #count(from, to) %>%
+  group_by(from, to) %>%
+  summarise(value = sum(value)) %>%
+  arrange(from, to) %>%
+  ungroup()
+
+
+# Plot the FINAL BANKS RESPONSES MOOD RING in extra high quality, vector graphics SVG format!
+svg(file="../../img/charts-sentiment/ba-responses-moodring.svg",width=5,height=5, pointsize=10)
+# Colors are tried to define them accordingly to Plutchik´s color wheel (2001) to represent the emotions.
+grid.col = c("T_anger" = "orangered2", "T_anticipation" = "orange2", "T_disgust" = "mediumpurple2", "T_fear" = "green4", "T_joy" = "gold2", "T_sadness" = "deepskyblue2", "T_surprise" = "dodgerblue2", "T_trust" = "olivedrab3",
+             "R_anger" = "orangered2", "R_anticipation" = "orange2", "R_disgust" = "mediumpurple2", "R_fear" = "green4", "R_joy" = "gold2", "R_sadness" = "deepskyblue2", "R_surprise" = "dodgerblue2", "R_trust" = "olivedrab3")
+
+circos.clear()
+#Set the gap size
+circos.par(gap.after = 2)
+chordDiagram(ba_resp_mood, grid.col = grid.col, transparency = .2)
+title("Banking: Emotional Relationships - Tweets and Responses")
+dev.off()
+
+```
+
+### Hypothesis testing H5. Bonus: Mood ring of tweets compared to responses (8 emotions of tweets put in relaton to 8 emotions of responses)
+### Sector: FINTECH
+### Hint: http://www.r-graph-gallery.com/123-circular-plot-circlize-package-2/
+### Readme: https://jokergoo.github.io/circlize_book/book/the-chorddiagram-function.html
+```{r}
+# LOAD again whole FinTech dataset with cleaned tweets and syuzhet NLP results
+load('../../data/output/smm-banks-fintech-output-fintech-syu-nlp.Rdata')
+ft_big_syu
+
+# Filter bank and fintech tweets and responses
+ft_resp <- filter(ft_big_syu, id %in% replyToSID | replyToSID %in% id)
+
+# Fintech
+# Filter and divide into bank and clients communication
+# ft_resp_banks <- filter(ft_resp, screenName %in% tw_parse) # communication banks
+# ft_resp_clients <- filter(ft_resp, !screenName %in% tw_parse) # communication clients
+
+# Select only the relevant fields: emotional dimensions, id, parent id
+ft_resp <- dplyr::select(ft_resp, anger, anticipation, disgust, fear, joy, sadness, surprise, trust, replyToSID, id)
+
+# Remove duplicates
+ft_resp = unique(ft_resp)
+
+# Melting data for reshaping it into a better processable format
+ft_resp_melt <- melt(data = ft_resp, id.vars = c("replyToSID", "id"),
+                    measure.vars =c("anger", "anticipation", "disgust", "fear", "joy", "sadness", "surprise", "trust"))
+
+# Cleaning of tweets classified with only zeros.
+# ft_resp <- filter(ft_resp, !anger == 0 | !anticipation == 0 | !disgust == 0 | !fear == 0 | !joy == 0 | !sadness == 0 | !surprise == 0 | !trust == 0)
+
+## An adjacency list looks like this:
+##   from to value
+## 1    a  A     1
+## 2    b  B     2
+## 3    c  C     3
+
+# Now trying to convert the tweet and response relations into an adjacency list:
+# Initialize an empty myAdjList
+myAdjList <- list()
+# Add special adj counter
+adjcounter = 1
+# Loops
+for (i in 1:nrow(ft_resp_melt)) {
+  print (i)
+  
+  for (j in 1:nrow(ft_resp_melt)) {
+    #print(j)
+
+    # Skip if replyToSID is NA
+    if(is.na(ft_resp_melt$replyToSID[j])) next
+
+    # Loop through the dataset
+    if(ft_resp_melt$id[i] == ft_resp_melt$replyToSID[j]) {
+      # Emotion value from tweet to response
+      a <- ft_resp_melt$variable[i] # Tweet
+      b <- ft_resp_melt$variable[j] # Response
+      c <- ft_resp_melt$value[i] # Emotion value of tweet
+      
+      a <- paste("T_", a, sep="") # Mark as Tweet
+      b <- paste("R_", b, sep="") # Mark as Response
+      # Add
+      tmp_tw <- list(from=a, to=b, value=c)
+      
+      # Emotion value from response to tweet
+      d <- ft_resp_melt$variable[j] # Response
+      e <- ft_resp_melt$variable[i] # Tweet
+      f <- ft_resp_melt$value[j] # Emotion value of response
+      
+      d <- paste("R_", d, sep="") # Mark as Response
+      e <- paste("T_", e, sep="") # Mark as Tweet
+      # Add
+      tmp_re <- list(from=d, to=e, value=f)
+      
+      # Add records to adjacency list
+      # Add tweet to response emotion value, if emotion value tweet c != 0
+      if (c != 0 && f != 0) {
+        myAdjList[[adjcounter]] <- tmp_tw
+        adjcounter = adjcounter + 1
+      }
+      
+      # Add response to tweet value, if emotion value response f != 0
+      if (f != 0 && c != 0) {
+        myAdjList[[adjcounter]] <- tmp_re
+        adjcounter = adjcounter + 1
+      }
+      
+    }
+  }
+}
+
+# Convert list to dataframe
+ft_df <- dplyr::bind_rows(myAdjList)
+
+# SAVE ba_df - tweets to responses relations
+save(ft_df, file = '../../data/output/smm-banks-fintech-output-fintech-responses.Rdata')
+# LOAD again (if needed in a later stage for further work)
+load('../../data/output/smm-banks-fintech-output-fintech-responses.Rdata')
+
+# Aggregate and group results
+ft_resp_mood <- ft_df %>%
+  filter(!value == 0) %>% # important! it should not count zeros
+  #count(from, to) %>%
+  group_by(from, to) %>%
+  summarise(value = sum(value)) %>%
+  arrange(from, to) %>%
+  ungroup()
+
+
+# Plot the FINAL BANKS RESPONSES MOOD RING in extra high quality, vector graphics SVG format!
+svg(file="../../img/charts-sentiment/ft-responses-moodring.svg",width=5,height=5, pointsize=10)
+# Colors are tried to define them accordingly to Plutchik´s color wheel (2001) to represent the emotions.
+grid.col = c("T_anger" = "orangered2", "T_anticipation" = "orange2", "T_disgust" = "mediumpurple2", "T_fear" = "green4", "T_joy" = "gold2", "T_sadness" = "deepskyblue2", "T_surprise" = "dodgerblue2", "T_trust" = "olivedrab3",
+             "R_anger" = "orangered2", "R_anticipation" = "orange2", "R_disgust" = "mediumpurple2", "R_fear" = "green4", "R_joy" = "gold2", "R_sadness" = "deepskyblue2", "R_surprise" = "dodgerblue2", "R_trust" = "olivedrab3")
+
+circos.clear()
+#Set the gap size
+circos.par(gap.after = 2)
+chordDiagram(ft_resp_mood, grid.col = grid.col, transparency = .2)
+title("FinTech: Emotional Relationships - Tweets and Responses")
+dev.off()
+
+# --- END ---
+
 # Circlize plot example
 #Create data
 name=c(3,10,10,3,6,7,8,3, 3)
 feature=paste("feature ", c(1,1,2,2,3,3,4,4, 4) , sep="")
 dat <- data.frame(name,feature)
 dat <- with(dat, table(name, feature))
- 
 dat
 
 circos.clear() 
@@ -1137,9 +1296,6 @@ circos.clear()
 chordDiagram(as.data.frame(dat), transparency = 0.5)
 title("Example")
 
-
-
-
-
 ```
+
 
