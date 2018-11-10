@@ -550,12 +550,17 @@ ft_nlp_result <- gl_nlp(ft_retweets_clean, nlp_type = "analyzeSentiment")
 ft_nlp_result
 # SAVE FINTECH Google NLP results
 save(ft_nlp_result, file = '../../data/output/smm-banks-fintech-output-fintech-google-nlp-scores.Rdata')
+# LOAD again (restore)
+load('../../data/output/smm-banks-fintech-output-fintech-google-nlp-scores.Rdata')
 
 # BANKS
 ba_nlp_result <- gl_nlp(ba_retweets_clean, nlp_type = "analyzeSentiment")
 ba_nlp_result
 # SAVE BANKS Google NLP results
 save(ba_nlp_result, file = '../../data/output/smm-banks-fintech-output-banks-google-nlp-scores.Rdata')
+# LOAD again (restore)
+load('../../data/output/smm-banks-fintech-output-banks-google-nlp-scores.Rdata')
+
 
 # 4. Visualization of results / histograms
 # FINTECH
@@ -1313,19 +1318,19 @@ load('../../data/output/smm-banks-fintech-output-fintech-responses.Rdata')
 
 # Aggregate and group results banks
 ba_resp_mood <- ba_df %>%
-  filter(from == "R_trust") %>% # Only take trust responses
-  group_by(from, to) %>%
-  summarise(value = sum(value)) %>%
-  arrange(from, to) %>%
-  ungroup()
+  filter(from == "R_trust")  # Only take trust responses
+#  group_by(from, to) %>%
+#  summarise(value = sum(value)) %>%
+#  arrange(from, to) %>%
+#  ungroup()
 
 # Aggregate and group results fintech
 ft_resp_mood <- ft_df %>%
-  filter(from == "R_trust") %>% # Only take trust responses
-  group_by(from, to) %>%
-  summarise(value = sum(value)) %>%
-  arrange(from, to) %>%
-  ungroup()
+  filter(from == "R_trust")  # Only take trust responses
+# group_by(from, to) %>%
+#  summarise(value = sum(value)) %>%
+#  arrange(from, to) %>%
+#  ungroup()
 
 
 # 1. Stats properties
