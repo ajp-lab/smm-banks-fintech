@@ -373,6 +373,20 @@ df_avgRT_Bank
 hist(log(df_avgRT_Bank$tw_followers))
 hist(log(df_avgRT_Fintech$tw_followers))
 
+# Plot histogram banking with percentage
+png(file="../../img/charts-histogram/hist_ba_h2.png")
+hist_ba_h2 = hist(log(df_avgRT_Bank$tw_followers), plot = FALSE)
+hist_ba_h2$density = hist_ba_h2$counts/sum(hist_ba_h2$counts)
+plot(hist_ba_h2, freq = FALSE,  xlab="Followers (log scale)", ylab="Percentage", main="Histogram of followers - Banking")
+dev.off()
+
+# Plot histogram FinTech with percentage
+png(file="../../img/charts-histogram/hist_ft_h2.png")
+hist_ft_h2 = hist(log(df_avgRT_Fintech$tw_followers), plot = FALSE)
+hist_ft_h2$density = hist_ft_h2$counts/sum(hist_ft_h2$counts)
+plot(hist_ft_h2, freq = FALSE,  xlab="Followers (log scale)", ylab="Percentage", main="Histogram of followers - FinTech")
+dev.off()
+
 # Descriptive stats
 describe(df_avgRT_Bank$tw_followers)
 describe(df_avgRT_Fintech$tw_followers)
@@ -454,6 +468,21 @@ qqplot(banks_data_only_tweets$text_length, banks_data_only_tweets$retweetCount)
 # Histograms about text_length
 hist(fintech_data_only_tweets$text_length)
 hist(banks_data_only_tweets$text_length)
+
+# Plot histogram banking with percentage
+png(file="../../img/charts-histogram/hist_ba_h3.png")
+hist_ba_h3 = hist(banks_data_only_tweets$text_length, plot = FALSE)
+hist_ba_h3$density = hist_ba_h3$counts/sum(hist_ba_h3$counts)
+plot(hist_ba_h3, freq = FALSE,  xlab="Tweet length", ylab="Percentage", main="Histogram of tweet length - Banking")
+dev.off()
+
+# Plot histogram FinTech with percentage
+png(file="../../img/charts-histogram/hist_ft_h3.png")
+hist_ft_h3 = hist(fintech_data_only_tweets$text_length, plot = FALSE)
+hist_ft_h3$density = hist_ft_h3$counts/sum(hist_ft_h3$counts)
+plot(hist_ft_h3, freq = FALSE,  xlab="Tweet length", ylab="Percentage", main="Histogram of tweet length - FinTech")
+dev.off()
+
 
 # Validation for multivariate tests, Shapiro-Wilk test
 # BANKS
@@ -592,6 +621,15 @@ hist(ft_nlp_result$documentSentiment$score,
      las=1, 
      breaks=5)
 
+
+# Plot histogram FinTech with percentage
+png(file="../../img/charts-histogram/hist_ft_h4.png")
+hist_ft_h4 = hist(ft_nlp_result$documentSentiment$score, plot = FALSE)
+hist_ft_h4$density = hist_ft_h4$counts/sum(hist_ft_h4$counts)
+plot(hist_ft_h4, freq = FALSE,  xlab="Sentiment score", ylab="Percentage", main="Histogram of sentiment score - FinTech")
+dev.off()
+
+
 # Create dataframe w. results, FinTech
 df_ft_nlp_res <- ft_nlp_result$documentSentiment
 df_ft_nlp_res$type <- rep("FinTech", length(df_ft_nlp_res$score))
@@ -627,6 +665,14 @@ hist(ba_nlp_result$documentSentiment$score,
      xlab="Score", 
      las=1, 
      breaks=5)
+
+# Plot histogram Banks with percentage
+png(file="../../img/charts-histogram/hist_ba_h4.png")
+hist_ba_h4 = hist(ba_nlp_result$documentSentiment$score, plot = FALSE)
+hist_ba_h4$density = hist_ba_h4$counts/sum(hist_ba_h4$counts)
+plot(hist_ba_h4, freq = FALSE,  xlab="Sentiment score", ylab="Percentage", main="Histogram of sentiment score - Banks")
+dev.off()
+
 
 # Create dataframe w. results, Banks
 df_ba_nlp_res <- ba_nlp_result$documentSentiment
