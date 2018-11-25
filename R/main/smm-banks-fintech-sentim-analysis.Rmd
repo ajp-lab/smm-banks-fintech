@@ -1055,6 +1055,15 @@ dev.off()
 # 3. Testing via t-test or Wilcoxon
 # 4. Results
 
+# LOAD again (if needed in a later stage for further work)
+load('../../data/output/smm-banks-fintech-output-fintech-syu-nlp.Rdata')
+# LOAD again (if needed in a later stage for further work)
+load('../../data/output/smm-banks-fintech-output-banks-syu-nlp.Rdata')
+
+# Load ALL TWEETS, Capture retweets
+ba_data_nrc_2 <- filter(ba_big_syu, isRetweet == "TRUE")
+ft_data_nrc_syu_2 <- filter(ft_big_syu, isRetweet == "TRUE")
+
 # Check only retweets, banks and FinTech
 ba_data_nrc
 ft_data_nrc_syu
@@ -1065,26 +1074,60 @@ describe(ft_data_nrc_syu$trust)
 hist(ba_data_nrc$trust)
 hist(ft_data_nrc_syu$trust)
 
+# 1. Stats properties
+describe(ba_data_nrc_2$trust)
+describe(ft_data_nrc_syu_2$trust)
+hist(ba_data_nrc_2$trust)
+hist(ft_data_nrc_syu_2$trust)
+
+
 # 2. Shapiro test for normal distribution
 with(ba_data_nrc, shapiro.test(ba_data_nrc$trust))
 with(ft_data_nrc_syu, shapiro.test(ft_data_nrc_syu$trust))
 
+with(ba_data_nrc_2, shapiro.test(ba_data_nrc_2$trust))
+with(ft_data_nrc_syu_2, shapiro.test(ft_data_nrc_syu_2$trust))
+
 # 3. Not normal distributed, so Wilcoxon rank-sum test
 # Write types into dataset, merge them
-ba_data_nrc$type <- rep("bank", length(ba_data_nrc$trust))
-ft_data_nrc_syu$type <- rep("fintech", length(ft_data_nrc_syu$trust))
+ba_data_nrc$type <- rep("Bank", length(ba_data_nrc$trust))
+ft_data_nrc_syu$type <- rep("Fintech", length(ft_data_nrc_syu$trust))
 ba_ft_syu_wcox <- rbind(ba_data_nrc, ft_data_nrc_syu)
 
 # 4. Wilcoxon ranked-sum test
 syu_trust_res_wilcox <- wilcox.test(trust ~ type, data = ba_ft_syu_wcox,
                    exact = FALSE, alternative="less")
-
 syu_trust_res_wilcox
 # p < 0.000
 
 # Further stats properties
 descr_ba <- describe(ba_data_nrc)
 descr_ft <- describe(ft_data_nrc_syu)
+descr_ba
+descr_ft
+
+# Only select needed data for box plot / H5 retweets
+ba_ft_syu_wcox <- dplyr::select(ba_ft_syu_wcox, type, anger, anticipation, disgust, fear, joy, sadness, surprise, trust)
+ba_ft_syu_wcox
+
+# Data prep for mood ring - data melt
+ba_ft_syu_wcox_melt <- melt(data = ba_ft_syu_wcox, id.vars = c("type"),
+                    measure.vars =c("anger", "anticipation", "disgust", "fear", "joy", "sadness", "surprise", "trust"))
+
+# Filter zeros, and emotional dim of trust
+ba_ft_syu_wcox_melt <-  ba_ft_syu_wcox_melt %>%
+  filter(!value == 0) %>%
+  filter(variable=="trust")
+
+# Chart: Boxplot Sentiment Score Compared to Entity Type Total
+ggplot(ba_ft_syu_wcox_melt) +
+  geom_boxplot(aes(x=variable, y=(value), col=as.factor(type))) +
+  labs(x = "Sentiment", y = "Sentiment score",
+       title="Sentiment Score of Trust Retweets, Compared to Entity Type")+
+  scale_color_discrete(name="Entity Type")+
+  coord_flip()
+
+
 
 ```
 
@@ -1195,6 +1238,10 @@ ba_resp_mood <- ba_df %>%
   arrange(from, to) %>%
   ungroup()
 
+# Reduced to Lvl1 complexity (only showing retweets to corporate tweets, not the other direction). The more complex mood ring (with all levels of complexity is moved to the appendix in the thesis).
+ba_resp_mood <- ba_resp_mood %>%
+  filter(str_detect(from, "^R_"))
+
 
 # Plot the FINAL BANKS RESPONSES MOOD RING in extra high quality, vector graphics SVG format!
 svg(file="../../img/charts-sentiment/ba-responses-moodring.svg",width=5,height=5, pointsize=10)
@@ -1206,7 +1253,7 @@ circos.clear()
 #Set the gap size
 circos.par(gap.after = 2)
 chordDiagram(ba_resp_mood, grid.col = grid.col, transparency = .2)
-title("Banking: Emotional Relationships - Tweets and Responses")
+title("Banking: Emotional Relationships - Responses to Tweets")
 dev.off()
 
 ```
@@ -1318,6 +1365,9 @@ ft_resp_mood <- ft_df %>%
   arrange(from, to) %>%
   ungroup()
 
+# Reduced to Lvl1 complexity (only showing retweets to corporate tweets, not the other direction). The more complex mood ring (with all levels of complexity is moved to the appendix in the thesis).
+ft_resp_mood <- ft_resp_mood %>%
+  filter(str_detect(from, "^R_"))
 
 # Plot the FINAL BANKS RESPONSES MOOD RING in extra high quality, vector graphics SVG format!
 svg(file="../../img/charts-sentiment/ft-responses-moodring.svg",width=5,height=5, pointsize=10)
@@ -1329,7 +1379,7 @@ circos.clear()
 #Set the gap size
 circos.par(gap.after = 2)
 chordDiagram(ft_resp_mood, grid.col = grid.col, transparency = .2)
-title("FinTech: Emotional Relationships - Tweets and Responses")
+title("FinTech: Emotional Relationships - Responses to Tweets")
 dev.off()
 
 # --- END ---
@@ -1356,6 +1406,7 @@ title("Example")
 # 2. Testing for normal distribution (Shapiro-Wilk) for emotional dimension score: Trust. Both sectors, banks vs. FinTech
 # 3. Testing via t-test or Wilcoxon
 # 4. Results
+# 5. Plotting boxplot
 
 # LOAD again (banks responses)
 load('../../data/output/smm-banks-fintech-output-banks-responses.Rdata')
@@ -1364,7 +1415,7 @@ load('../../data/output/smm-banks-fintech-output-fintech-responses.Rdata')
 
 # Aggregate and group results banks
 ba_resp_mood <- ba_df %>%
-  filter(from == "R_trust")  # Only take trust responses
+  filter(from == "R_trust")  # Only take trust responses for histogram and hypothesis testing, no aggregate function
 #  group_by(from, to) %>%
 #  summarise(value = sum(value)) %>%
 #  arrange(from, to) %>%
@@ -1372,11 +1423,11 @@ ba_resp_mood <- ba_df %>%
 
 # Aggregate and group results fintech
 ft_resp_mood <- ft_df %>%
-  filter(from == "R_trust")  # Only take trust responses
+  filter(from == "R_trust")  # Only take trust responses for histogram and hypothesis testing, no aggregate function
 # group_by(from, to) %>%
-#  summarise(value = sum(value)) %>%
-#  arrange(from, to) %>%
-#  ungroup()
+# summarise(value = sum(value)) %>%
+# arrange(from, to) %>%
+# ungroup()
 
 
 # 1. Stats properties
@@ -1403,8 +1454,8 @@ with(ft_resp_mood, shapiro.test(ft_resp_mood$value))
 
 # 3. Not normal distributed, so Wilcoxon rank-sum test
 # Write types into dataset, merge them
-ba_resp_mood$type <- rep("bank", length(ba_resp_mood$value))
-ft_resp_mood$type <- rep("fintech", length(ft_resp_mood$value))
+ba_resp_mood$type <- rep("Bank", length(ba_resp_mood$value))
+ft_resp_mood$type <- rep("FinTech", length(ft_resp_mood$value))
 ba_ft_resp_wcox <- rbind(ba_resp_mood, ft_resp_mood)
 
 # 4. Wilcoxon ranked-sum test
@@ -1413,6 +1464,24 @@ ba_ft_resp_trust_wcox <- wilcox.test(value ~ type, data = ba_ft_resp_wcox,
 
 ba_ft_resp_trust_wcox
 # W = 0, p-value = 0.0004455
+
+# 5. Plots: plotting boxplots, showing responses
+ba_df$type <- rep("Bank", length(ba_df$value))
+ft_df$type <- rep("FinTech", length(ft_df$value))
+ba_ft_resp_all <- rbind(ba_df, ft_df)
+
+# Only responses in the boxplot
+ba_ft_resp_all <- ba_ft_resp_all %>%
+  filter(str_detect(from, "^R_trust"))
+
+# Chart: Boxplot Sentiment Score Compared to Entity Type Total
+ggplot(ba_ft_resp_all) +
+  geom_boxplot(aes(x=from, y=(value), col=as.factor(type))) +
+  labs(x = "Sentiment", y = "Sentiment score",
+       title="Sentiment Score of Trust Responses, Compared to Entity Type")+
+  scale_color_discrete(name="Entity Type")+
+  coord_flip()
+
 
 
 ```
