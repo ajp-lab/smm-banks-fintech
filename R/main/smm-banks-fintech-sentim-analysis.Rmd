@@ -1091,7 +1091,7 @@ with(ft_data_nrc_syu_2, shapiro.test(ft_data_nrc_syu_2$trust))
 # 3. Not normal distributed, so Wilcoxon rank-sum test
 # Write types into dataset, merge them
 ba_data_nrc$type <- rep("Bank", length(ba_data_nrc$trust))
-ft_data_nrc_syu$type <- rep("Fintech", length(ft_data_nrc_syu$trust))
+ft_data_nrc_syu$type <- rep("FinTech", length(ft_data_nrc_syu$trust))
 ba_ft_syu_wcox <- rbind(ba_data_nrc, ft_data_nrc_syu)
 
 # 4. Wilcoxon ranked-sum test
@@ -1122,8 +1122,8 @@ ba_ft_syu_wcox_melt <-  ba_ft_syu_wcox_melt %>%
 # Chart: Boxplot Sentiment Score Compared to Entity Type Total
 ggplot(ba_ft_syu_wcox_melt) +
   geom_boxplot(aes(x=variable, y=(value), col=as.factor(type))) +
-  labs(x = "Sentiment", y = "Sentiment score",
-       title="Sentiment Score of Trust Retweets, Compared to Entity Type")+
+  labs(x = "Emotion", y = "NLP classifed emotional score",
+       title="Emotional Score of Trust Retweets Compared to Entity Type")+
   scale_color_discrete(name="Entity Type")+
   coord_flip()
 
@@ -1477,8 +1477,8 @@ ba_ft_resp_all <- ba_ft_resp_all %>%
 # Chart: Boxplot Sentiment Score Compared to Entity Type Total
 ggplot(ba_ft_resp_all) +
   geom_boxplot(aes(x=from, y=(value), col=as.factor(type))) +
-  labs(x = "Sentiment", y = "Sentiment score",
-       title="Sentiment Score of Trust Responses, Compared to Entity Type")+
+  labs(y = "NLP classified emotional score", x = "Emotion",
+       title="Emotional Score of Trust Responses Compared to Entity Type")+
   scale_color_discrete(name="Entity Type")+
   coord_flip()
 
